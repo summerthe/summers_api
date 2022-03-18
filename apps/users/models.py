@@ -1,4 +1,4 @@
-import uuid
+from typing import List
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -13,9 +13,8 @@ class User(AbstractUser, BaseModel):
     username = last_name = first_name = None  # type: ignore
     name = models.CharField(_("Name"), max_length=255)
     email = models.EmailField(_("Email address"), unique=True)
-    guid = models.UUIDField(_("guid"), default=uuid.uuid4, editable=False)
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []
+    REQUIRED_FIELDS: List[str] = []
 
     def __str__(self):
         return self.email

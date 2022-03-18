@@ -1,14 +1,18 @@
 from django.conf import settings
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
-from apps.users.api import views
+from . import views
 
 if settings.DEBUG:
     router = DefaultRouter()
 else:
     router = SimpleRouter()  # type: ignore
 
-app_name = "apps.users"
+app_name = "apps.tube2drive"
 
-router.register("auth", views.AuthViewSet)
+router.register(
+    "upload-requests",
+    views.UploadRequestViewSet,
+    basename="upload-requests",
+)
 urlpatterns = router.urls

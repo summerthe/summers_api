@@ -20,4 +20,6 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("summers_api.api_router")),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(  # type: ignore
+    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+)

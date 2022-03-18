@@ -1,7 +1,6 @@
 ---
 # Config for Dependabot updates. See Documentation here:
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
-
 version: 2
 updates:
   # Enable version updates for Python/Pip - Production
