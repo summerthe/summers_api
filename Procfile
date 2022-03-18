@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn summers_api.wsgi.py
+web: gunicorn summers_api.wsgi
