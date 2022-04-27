@@ -2,7 +2,7 @@
 psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
 # Testing
 # ------------------------------------------------------------------------------
-mypy==0.941 # https://github.com/python/mypy
+mypy==0.942 # https://github.com/python/mypy
 django-stubs==1.9.0  # https://github.com/typeddjango/django-stubs
 djangorestframework-stubs==1.4.0  # https://github.com/typeddjango/djangorestframework-stubs
 # Code quality
