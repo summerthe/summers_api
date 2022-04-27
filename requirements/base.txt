@@ -12,6 +12,6 @@ django-cors-headers==3.11.0 # https://github.com/adamchainz/django-cors-headers
 # GCP
 google-auth==2.6.2
 google-api-core==2.7.1
-google-api-python-client==2.41.0
+google-api-python-client==2.46.0
 # youtube-dl
 yt-dlp==2022.3.8.2
