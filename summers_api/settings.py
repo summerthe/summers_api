@@ -41,8 +41,11 @@ DJANGO_APPS = [
 ]
 THIRD_PARTY_APPS = [
     "rest_framework",
-    "corsheaders",
+    "rest_framework.authtoken",
     "rest_framework_simplejwt",
+    "social_django",
+    "rest_social_auth",
+    "corsheaders",
 ]
 
 LOCAL_APPS = [
@@ -61,6 +64,13 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+AUTHENTICATION_BACKENDS = (
+    "social_core.backends.open_id.OpenIdAuth",
+    "social_core.backends.google.GoogleOAuth2",
+    "social_core.backends.google.GoogleOAuth",
+    "django.contrib.auth.backends.ModelBackend",
+)
 
 ROOT_URLCONF = "summers_api.urls"
 TEMPLATES = [
@@ -165,3 +175,21 @@ GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")
 GCP_SERVICE_ACCOUNT_JSON: Dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
 
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
+
+# Social auth
+
+# For google
+# https://accounts.google.com/o/oauth2/v2/auth?
+# scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&
+# access_type=offline&
+# include_granted_scopes=true&
+# response_type=code&
+# redirect_uri=redirect_uri&
+# client_id=client_id
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+]
