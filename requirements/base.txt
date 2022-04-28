@@ -15,4 +15,4 @@ google-auth==2.6.6
 google-api-core==2.7.2
 google-api-python-client==2.46.0
 # youtube-dl
-yt-dlp==2022.3.8.2
+yt-dlp==2022.4.8
