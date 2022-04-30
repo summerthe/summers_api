@@ -67,8 +67,9 @@ def find_playlist_and_upload(
             filename = filename.replace("%", "per")
             ydl_opts = {
                 "outtmpl": filename,
-                "buffersize": 4 * 1024 * 1024,  # 4Mb
-                "http_chunk_size": 4 * 1024 * 1024,  # 4Mb
+                "buffersize": 40 * 1024 * 1024,  # 40Mb
+                "http_chunk_size": 40 * 1024 * 1024,  # 40Mb
+                "max_filesize": 500 * 1024 * 1024,  # 500Mb
             }
             try:
                 # download youtube video in local
@@ -146,7 +147,6 @@ def fetch_youtube_video_ids(playlist_id: str) -> List[str]:
     # iterating over pagination and fetching all video_ids
     try:
         while True:
-            print("response", response)
             try:
                 request = youtube_client.playlistItems().list(
                     part="snippet",
@@ -212,11 +212,9 @@ def update_upload_request_status(pk: int, status: str) -> None:
     pk : int
     status : str
     """
-    print(settings.CURRENT_DOMAIN, "CURRENT_DOMAIN")
     url = settings.CURRENT_DOMAIN + reverse_lazy(
         "api:apps.tube2drive:upload-requests-detail", kwargs={"pk": pk}
     )
-    print("url", url)
     payload = json.dumps({"status": status})
     headers = {"App-Own": "", "Content-Type": "application/json"}
     requests.request("PUT", url, headers=headers, data=payload)
