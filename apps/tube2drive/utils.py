@@ -69,7 +69,7 @@ def find_playlist_and_upload(
                 "outtmpl": filename,
                 "buffersize": 40 * 1024 * 1024,  # 40Mb
                 "http_chunk_size": 40 * 1024 * 1024,  # 40Mb
-                "max_filesize": 500 * 1024 * 1024,  # 500Mb
+                "max_filesize": 400 * 1024 * 1024,  # 400Mb
             }
             try:
                 # download youtube video in local
