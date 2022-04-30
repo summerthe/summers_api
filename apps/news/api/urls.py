@@ -15,4 +15,15 @@ router.register(
     views.NewsletterViewSet,
     basename="newsletter",
 )
+router.register(
+    "categories",
+    views.CategoryViewSet,
+    basename="categories",
+)
+router.register(
+    "weather",
+    views.WeatherViewSet,
+    basename="weather",
+)
+
 urlpatterns = router.urls
