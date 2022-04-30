@@ -76,11 +76,12 @@ def find_playlist_and_upload(
                         download=False,
                     )
                     # take all formats and use a format that has less than specified file size
-                    MAX_FILE_SIZE = 500 * 1024 * 1024  # 500Mb
+                    MAX_FILE_SIZE = 200 * 1024 * 1024  # 500Mb
                     formats = info.get("formats")[::-1]
                     format_to_use = None
                     for format in formats:
                         try:
+                            print("Current size", int(format.get("filesize")))
                             if int(format.get("filesize")) < MAX_FILE_SIZE:
                                 format_to_use = format.get("format_id")
                                 break
