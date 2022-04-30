@@ -2,7 +2,7 @@ python-slugify==6.1.2  # https://github.com/un33k/python-slugify
 Pillow==9.1.0  # https://github.com/python-pillow/Pillow
 # Django
 # ------------------------------------------------------------------------------
-django==4.0.4   # https://www.djangoproject.com/
+django==3.2.13   # https://www.djangoproject.com/
 django-environ==0.8.1  # https://github.com/joke2k/django-environ
 # Django REST Framework
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
