@@ -67,14 +67,34 @@ def find_playlist_and_upload(
             filename = filename.replace("%", "per")
             ydl_opts = {
                 "outtmpl": filename,
-                "buffersize": 40 * 1024 * 1024,  # 40Mb
-                "http_chunk_size": 40 * 1024 * 1024,  # 40Mb
-                "max_filesize": 400 * 1024 * 1024,  # 400Mb
             }
             try:
-                # download youtube video in local
+                # extract details from video
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    ydl.download(["https://www.youtube.com/watch?v={}".format(video)])
+                    info = ydl.extract_info(
+                        "https://www.youtube.com/watch?v={}".format(video),
+                        download=False,
+                    )
+                    # take all formats and use a format that has less than specified file size
+                    MAX_FILE_SIZE = 500 * 1024 * 1024  # 500Mb
+                    formats = info.get("formats")[::-1]
+                    format_to_use = None
+                    for format in formats:
+                        try:
+                            if int(format.get("filesize")) < MAX_FILE_SIZE:
+                                format_to_use = format.get("format_id")
+                                break
+                        except Exception:
+                            pass
+
+                if not format_to_use:
+                    continue
+
+                ydl_opts_with_format = {"outtmpl": filename, "format": format_to_use}
+                with yt_dlp.YoutubeDL(ydl_opts_with_format) as ydl:
+                    ydl.download(
+                        ["https://www.youtube.com/watch?v={}".format(video)],
+                    )
 
                 if not os.path.exists(filename):
                     # adding webm extension on filename when yt_dlp don't add
