@@ -88,7 +88,7 @@ class WeatherViewSet(viewsets.GenericViewSet):
             ip_address = x_forwarded_for.split(",")[0]
         else:
             ip_address = request.META.get("REMOTE_ADDR")
-        print("ip_address", ip_address)
+
         latlong = requests.get(
             "https://ipapi.co/{}/latlong/".format(ip_address)
         ).text.split(",")
@@ -102,7 +102,7 @@ class WeatherViewSet(viewsets.GenericViewSet):
 
         return Response(
             data=weather,
-            status=status.HTTP_201_CREATED,
+            status=status.HTTP_200_OK,
         )
 
 
