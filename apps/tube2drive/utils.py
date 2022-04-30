@@ -61,9 +61,15 @@ def find_playlist_and_upload(
             request = youtube_client.videos().list(part="snippet", id=video)
             response = request.execute()
 
-            filename = "{}-{}".format(counter, response["items"][0]["snippet"]["title"])
+            filename = "/tmp/{}-{}".format(
+                counter, response["items"][0]["snippet"]["title"]
+            )
             filename = filename.replace("%", "per")
-            ydl_opts = {"outtmpl": filename}
+            ydl_opts = {
+                "outtmpl": filename,
+                "buffersize": 4 * 1024 * 1024,  # 4Mb
+                "http_chunk_size": 4 * 1024 * 1024,  # 4Mb
+            }
             try:
                 # download youtube video in local
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -190,7 +196,7 @@ def upload_to_drive(
         credentials=credentials,
         cache_discovery=False,
     )
-    file_metadata = {"name": filename, "parents": [folder_id]}
+    file_metadata = {"name": filename.lstrip("/tmp/"), "parents": [folder_id]}
     media = MediaFileUpload(filename, mimetype="video/*")
     # uploading
     drive_client.files().create(
