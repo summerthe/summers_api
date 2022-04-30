@@ -10,11 +10,15 @@ class Command(BaseCommand):
         categories_list = [
             "Business",
             "Entertainment",
-            "General",
+            "Environment",
+            "Food",
             "Health",
+            "Politics",
             "Science",
             "Sports",
             "Technology",
+            "Top",
+            "World",
         ]
 
         for category in categories_list:

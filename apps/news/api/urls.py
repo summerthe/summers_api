@@ -25,5 +25,15 @@ router.register(
     views.WeatherViewSet,
     basename="weather",
 )
+router.register(
+    "articles",
+    views.ArticleViewSet,
+    basename="articles",
+)
+router.register(
+    "articles/saved",
+    views.SavedArticleViewSet,
+    basename="saved-articles",
+)
 
 urlpatterns = router.urls

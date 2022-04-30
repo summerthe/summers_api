@@ -9,8 +9,12 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.base.apis import viewsets
-from apps.news.api.serializers import CategorySerializer, NewsletterSerializer
-from apps.news.models import Category, Newsletter
+from apps.news.api.serializers import (
+    CategorySerializer,
+    NewsletterSerializer,
+    SavedArticleSerializer,
+)
+from apps.news.models import Category, Newsletter, SavedArticle
 
 User = get_user_model()
 
@@ -53,16 +57,29 @@ class NewsletterViewSet(viewsets.GenericViewSet):
 
 
 class CategoryViewSet(viewsets.BaseListRetrieveModelViewSet):
+    """
+    Following Endpoints are created by this modelviewset.
+
+    List : GET `/`
+    Get : GET `/<pk>/`
+    """
+
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     permission_classes = (AllowAny,)
 
 
 class WeatherViewSet(viewsets.GenericViewSet):
+    """
+    Following Endpoints are created by this modelviewset.
+
+    Get weather: GET `/get-temp/`
+    """
+
     permission_classes = (AllowAny,)
 
     @action(detail=False, methods=["get"], url_path="get-temp")
-    def get_weather(self, request: Request, *args, **kwargs):
+    def get_temp(self, request: Request, *args, **kwargs):
         """Get weather data from ip address."""
 
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
@@ -87,3 +104,55 @@ class WeatherViewSet(viewsets.GenericViewSet):
             data=weather,
             status=status.HTTP_201_CREATED,
         )
+
+
+class SavedArticleViewSet(viewsets.BaseCreateListRetrieveModelViewSet):
+    """
+    Following Endpoints are created by this modelviewset.
+
+    Create: POST `/`
+    List: GET `/`
+    Get: GET `/<pk>/`
+    """
+
+    queryset = SavedArticle.objects.all()
+    serializer_class = SavedArticleSerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        return qs.filter(user=self.request.user)
+
+
+class ArticleViewSet(viewsets.GenericViewSet):
+    """
+    Following Endpoints are created by this modelviewset.
+
+    List: GET `/`
+    """
+
+    permission_classes = (AllowAny,)
+
+    def list(self, request):
+        NEWSDATA_IO_API_KEY = settings.NEWSDATA_IO_API_KEY
+        base_url = (
+            f"https://newsdata.io/api/1/news?apikey={NEWSDATA_IO_API_KEY}&language=en"
+        )
+
+        if query := self.request.GET.get("q"):
+            base_url += f"&q={query}"
+
+        if category := self.request.GET.get("category"):
+            base_url += f"&category={category.lower()}"
+
+        if to_date := self.request.GET.get("to_date"):
+            base_url += f"&to_date={to_date}"
+
+        if from_date := self.request.GET.get("from_date"):
+            base_url += f"&from_date={from_date}"
+
+        if page := self.request.GET.get("page"):
+            base_url += f"&page={page}"
+
+        response = requests.get(base_url)
+        data = response.json()
+        return Response(data=data, status=status.HTTP_200_OK)

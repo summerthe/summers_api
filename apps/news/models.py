@@ -34,3 +34,18 @@ class Category(BaseModel):
         verbose_name = _("Category")
         verbose_name_plural = _("Categories")
         ordering = ["-updated_at"]
+
+
+class SavedArticle(BaseModel):
+    """Saved Article by user."""
+
+    article = models.JSONField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.user)
+
+    class Meta:
+        verbose_name = _("Newsletter")
+        verbose_name_plural = _("Newsletters")
+        ordering = ["-updated_at"]
