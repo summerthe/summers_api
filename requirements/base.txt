@@ -8,7 +8,7 @@ djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 djangorestframework-simplejwt==5.1.0 # https://github.com/jazzband/djangorestframework-simplejwt
 drf-nested-routers==0.93.4 # https://github.com/alanjds/drf-nested-routers
 # GCP
-google-api-core==2.7.2
+google-api-core==2.7.3
 google-api-python-client==2.46.0
 google-auth==2.6.6
 #Other utils
