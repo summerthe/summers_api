@@ -9,7 +9,7 @@ djangorestframework-simplejwt==5.1.0 # https://github.com/jazzband/djangorestfra
 drf-nested-routers==0.93.4 # https://github.com/alanjds/drf-nested-routers
 # GCP
 google-api-core==2.7.2
-google-api-python-client==2.46.0
+google-api-python-client==2.47.0
 google-auth==2.6.6
 #Other utils
 Pillow==9.1.0  # https://github.com/python-pillow/Pillow
