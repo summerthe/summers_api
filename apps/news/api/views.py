@@ -1,3 +1,4 @@
+import pandas as pd
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -155,4 +156,14 @@ class ArticleViewSet(viewsets.GenericViewSet):
 
         response = requests.get(base_url)
         data = response.json()
+
+        # convert empty image_url to default image.
+        results_df = pd.DataFrame(data["results"])
+
+        if len(results_df) > 0:
+            results_df["image_url"] = results_df["image_url"].fillna(
+                settings.DEFAULT_NEWS_IMAGE_URL
+            )
+            data["results"] = results_df.to_dict("records")
+
         return Response(data=data, status=status.HTTP_200_OK)

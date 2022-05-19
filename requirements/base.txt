@@ -11,6 +11,7 @@ drf-nested-routers==0.93.4 # https://github.com/alanjds/drf-nested-routers
 google-api-core==2.7.2
 google-api-python-client==2.46.0
 google-auth==2.6.6
+pandas==1.4.2
 #Other utils
 Pillow==9.1.0  # https://github.com/python-pillow/Pillow
 python-slugify==6.1.2  # https://github.com/un33k/python-slugify
