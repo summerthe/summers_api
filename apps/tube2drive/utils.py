@@ -82,7 +82,11 @@ def find_playlist_and_upload(
                     for format in formats:
                         try:
                             print("Current size", int(format.get("filesize")))
-                            if int(format.get("filesize")) < MAX_FILE_SIZE:
+                            if (
+                                int(format.get("filesize")) < MAX_FILE_SIZE
+                                and format.get("vcodec") != "none"
+                                and format.get("acodec") != "none"
+                            ):
                                 format_to_use = format.get("format_id")
                                 break
                         except Exception:
