@@ -71,7 +71,7 @@ def find_playlist_and_upload(
             try:
                 while (
                     psutil.Process(os.getpid()).memory_info().rss
-                    < 320 * 1024 * 1024  # 320MB
+                    > 320 * 1024 * 1024  # 320MB
                 ):
                     time.sleep(2)
                 download_video()
@@ -82,7 +82,7 @@ def find_playlist_and_upload(
 
                 while (
                     psutil.Process(os.getpid()).memory_info().rss
-                    < 320 * 1024 * 1024  # 320MB
+                    > 320 * 1024 * 1024  # 320MB
                 ):
                     time.sleep(2)
 
