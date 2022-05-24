@@ -1,5 +1,6 @@
 import json
 import os
+import time
 import traceback
 from typing import List
 
@@ -57,6 +58,7 @@ def find_playlist_and_upload(
         )
         counter = 1
         for video in videos:
+            time.sleep(2)
             # get youtube video details
             request = youtube_client.videos().list(part="snippet", id=video)
             response = request.execute()
@@ -65,41 +67,56 @@ def find_playlist_and_upload(
                 counter, response["items"][0]["snippet"]["title"]
             )
             filename = filename.replace("%", "per")
-            ydl_opts = {
-                "outtmpl": filename,
-            }
             try:
-                # extract details from video
+                ydl_opts = {"outtmpl": filename}
+                # checks whether approx filesize of default format is greater than limit or not,
+                # if file size is greather than find a format which has lesser size than
                 with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                    info = ydl.extract_info(
-                        "https://www.youtube.com/watch?v={}".format(video),
-                        download=False,
-                    )
-                    # take all formats and use a format that has less than specified file size
-                    MAX_FILE_SIZE = 150 * 1024 * 1024  # 500Mb
-                    formats = info.get("formats")[::-1]
-                    format_to_use = None
-                    for format in formats:
-                        try:
-                            print("Current size", int(format.get("filesize")))
-                            if (
-                                int(format.get("filesize")) < MAX_FILE_SIZE
-                                and format.get("vcodec") != "none"
-                                and format.get("acodec") != "none"
-                            ):
-                                format_to_use = format.get("format_id")
-                                break
-                        except Exception:
-                            pass
+                    try:
+                        info = ydl.extract_info(
+                            "https://www.youtube.com/watch?v={}".format(video),
+                            download=False,
+                        )
+                        filesize_approx = info.get("filesize_approx")  # in bytes
+                        MAX_FILE_SIZE = 150 * 1024 * 1024  # 150Mb
+                        if filesize_approx > MAX_FILE_SIZE:
+                            # sort formats by filesize desc
+                            formats = sorted(
+                                info.get("formats"),
+                                key=lambda format: int(format.get("filesize"))
+                                if format.get("filesize")
+                                else 0,
+                                reverse=True,
+                            )
+                            format_to_use = None
+                            # find format which is less than max limit.
+                            for format in formats:
+                                try:
+                                    print("Current size", int(format.get("filesize")))
+                                    if (
+                                        int(format.get("filesize")) < MAX_FILE_SIZE
+                                        and format.get("vcodec") != "none"
+                                        and format.get("acodec") != "none"
+                                    ):
+                                        format_to_use = format.get("format_id")
+                                        break
+                                except Exception:
+                                    pass
+                            ydl_opts["format"] = format_to_use
 
-                if not format_to_use:
-                    continue
+                            if not format_to_use:
+                                continue
 
-                ydl_opts_with_format = {"outtmpl": filename, "format": format_to_use}
-                with yt_dlp.YoutubeDL(ydl_opts_with_format) as ydl:
-                    ydl.download(
-                        ["https://www.youtube.com/watch?v={}".format(video)],
-                    )
+                    except Exception:
+                        pass
+
+                with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                    try:
+                        ydl.download(
+                            ["https://www.youtube.com/watch?v={}".format(video)],
+                        )
+                    except Exception:
+                        pass
 
                 if not os.path.exists(filename):
                     # adding webm extension on filename when yt_dlp don't add
