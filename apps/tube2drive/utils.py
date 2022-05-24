@@ -74,7 +74,7 @@ def find_playlist_and_upload(
                     > 320 * 1024 * 1024  # 320MB
                 ):
                     time.sleep(2)
-                download_video()
+                download_video(filename, video)
 
                 if not os.path.exists(filename):
                     # adding webm extension on filename when yt_dlp don't add
