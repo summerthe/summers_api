@@ -6,7 +6,6 @@ from typing import List
 
 import googleapiclient
 import googleapiclient.discovery
-import psutil
 import requests
 import yt_dlp
 from django.conf import settings
@@ -69,22 +68,11 @@ def find_playlist_and_upload(
             )
             filename = filename.replace("%", "per")
             try:
-                while (
-                    psutil.Process(os.getpid()).memory_info().rss
-                    > 320 * 1024 * 1024  # 320MB
-                ):
-                    time.sleep(2)
                 download_video(filename, video)
 
                 if not os.path.exists(filename):
                     # adding webm extension on filename when yt_dlp don't add
                     filename += ".webm"
-
-                while (
-                    psutil.Process(os.getpid()).memory_info().rss
-                    > 320 * 1024 * 1024  # 320MB
-                ):
-                    time.sleep(2)
 
                 try:
                     # upload local file to gdrive
