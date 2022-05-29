@@ -1,5 +1,6 @@
 import json
 import os
+import shutil
 import time
 import traceback
 from typing import List
@@ -106,46 +107,60 @@ def download_video(filename, video):
                 "https://www.youtube.com/watch?v={}".format(video),
                 download=False,
             )
-            filesize_approx = info.get("filesize_approx")  # in bytes
-            MAX_FILE_SIZE = 150 * 1024 * 1024  # 150Mb
-            if filesize_approx > MAX_FILE_SIZE:
-                # sort formats by filesize desc
-                formats = sorted(
-                    info.get("formats"),
-                    key=lambda format: int(format.get("filesize"))
-                    if format.get("filesize")
-                    else 0,
-                    reverse=True,
-                )
-                format_to_use = None
-                # find format which is less than max limit.
-                for format in formats:
-                    try:
-                        print("Current size", int(format.get("filesize")))
-                        if (
-                            int(format.get("filesize")) < MAX_FILE_SIZE
-                            and format.get("vcodec") != "none"
-                            and format.get("acodec") != "none"
-                        ):
-                            format_to_use = format.get("format_id")
-                            break
-                    except Exception:
-                        pass
-                ydl_opts["format"] = format_to_use
-
-                if not format_to_use:
-                    return
-
-        except Exception:
-            pass
-
-    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-        try:
-            ydl.download(
-                ["https://www.youtube.com/watch?v={}".format(video)],
+            formats = sorted(
+                info.get("formats"),
+                key=lambda format: int(format.get("resolution").split("x")[0])
+                if format.get("resolution").split("x")[0].isnumeric()
+                else 0,
+                reverse=True,
             )
+            for format in formats:
+                if format.get("vcodec") != "none" and format.get("acodec") != "none":
+                    url_to_download = format.get("url")
+                    with requests.get(url_to_download, stream=True) as r:
+                        with open(filename, "wb") as f:
+                            shutil.copyfileobj(r.raw, f)
+                    break
+            # filesize_approx = info.get("filesize_approx")  # in bytes
+            # MAX_FILE_SIZE = 150 * 1024 * 1024  # 150Mb
+            # if filesize_approx > MAX_FILE_SIZE:
+            #     # sort formats by filesize desc
+            #     formats = sorted(
+            #         info.get("formats"),
+            #         key=lambda format: int(format.get("filesize"))
+            #         if format.get("filesize")
+            #         else 0,
+            #         reverse=True,
+            #     )
+            #     format_to_use = None
+            #     # find format which is less than max limit.
+            #     for format in formats:
+            #         try:
+            #             print("Current size", int(format.get("filesize")))
+            #             if (
+            #                 int(format.get("filesize")) < MAX_FILE_SIZE
+            #                 and format.get("vcodec") != "none"
+            #                 and format.get("acodec") != "none"
+            #             ):
+            #                 format_to_use = format.get("format_id")
+            #                 break
+            #         except Exception:
+            #             pass
+            #     ydl_opts["format"] = format_to_use
+
+            #     if not format_to_use:
+            #         return
+
         except Exception:
             pass
+
+    # with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+    #     try:
+    #         ydl.download(
+    #             ["https://www.youtube.com/watch?v={}".format(video)],
+    #         )
+    #     except Exception:
+    #         pass
 
 
 def fetch_youtube_video_ids(playlist_id: str) -> List[str]:
