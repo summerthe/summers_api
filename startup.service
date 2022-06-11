@@ -1,0 +1,10 @@
+[Unit]
+Description=Summers API Startup
+
+[Service]
+User=root
+WorkingDirectory=ABSOLUTE_PROJECT_PATH/summers_api
+ExecStart=/bin/bash -c 'cd ABSOLUTE_PROJECT_PATH/summers_api && git pull origin main && source venv/bin/activate && python3.9 manage.py runserver 0.0.0.0:80'
+
+[Install]
+WantedBy=multi-user.target
