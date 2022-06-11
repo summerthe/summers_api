@@ -27,8 +27,10 @@ class UploadRequest(BaseModel):
         (PLAYLIST_NOT_FOUND_CHOICE, PLAYLIST_NOT_FOUND_CHOICE),
     )
 
-    playlist_id = models.CharField(max_length=255)
-    folder_id = models.CharField(max_length=255)
+    playlist_link = models.URLField()
+    playlist_name = models.CharField(max_length=255, blank=True, null=True)
+
+    folder_link = models.URLField()
     status = models.CharField(
         choices=STATUS_CHOICES,
         max_length=25,
@@ -36,10 +38,10 @@ class UploadRequest(BaseModel):
         blank=True,
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    slug = models.SlugField(unique=True, editable=False)
+    slug = models.SlugField(unique=True, editable=False, max_length=400)
 
     def __str__(self):
-        return self.playlist_id
+        return self.playlist_name
 
     class Meta:
         verbose_name = _("UploadRequest")

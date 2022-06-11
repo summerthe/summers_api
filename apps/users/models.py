@@ -11,7 +11,7 @@ class User(AbstractUser, BaseModel):
     """Default user for Summers API."""
 
     last_name = first_name = None  # type: ignore
-    username = models.CharField(max_length=150, blank=True, null=True)
+    username = None
 
     name = models.CharField(_("Name"), max_length=255)
     email = models.EmailField(_("Email address"), unique=True)
