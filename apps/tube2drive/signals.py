@@ -16,7 +16,10 @@ from apps.tube2drive.utils import find_playlist_and_upload
 def slugify_upload_request(sender, instance, *args, **kwargs):
     if kwargs["created"]:
         # extracting id from link
-        playlist_id = parse_qs(urlparse(instance.playlist_link).query)["list"][0]
+        try:
+            playlist_id = parse_qs(urlparse(instance.playlist_link).query)["list"][0]
+        except KeyError:
+            playlist_id = None
 
         youtube_api = Youtube()
         playlist_name = youtube_api.get_playlist_title(playlist_id)

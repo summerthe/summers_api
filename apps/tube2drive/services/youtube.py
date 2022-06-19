@@ -104,9 +104,11 @@ class Youtube:
         -------
         str
         """
-        request = self.youtube_client.playlists().list(part="snippet", id=playlist_id)
-        response = request.execute()
         try:
+            request = self.youtube_client.playlists().list(
+                part="snippet", id=playlist_id
+            )
+            response = request.execute()
             title = response["items"][0]["snippet"]["title"]
             return title
         except Exception:
