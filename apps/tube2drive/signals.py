@@ -24,6 +24,8 @@ def slugify_upload_request(sender, instance, *args, **kwargs):
         youtube_api = Youtube()
         playlist_name = youtube_api.get_playlist_title(playlist_id)
         instance.playlist_name = playlist_name
+        if instance.playlist_name == UploadRequest.NOT_FOUND:
+            instance.status = UploadRequest.PLAYLIST_NOT_FOUND_CHOICE
         instance.slug = slugify(instance.playlist_name + str(random.randint(0, 9999)))[
             :400
         ]

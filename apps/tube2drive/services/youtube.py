@@ -6,6 +6,8 @@ import googleapiclient.discovery
 from django.conf import settings
 from google.oauth2 import service_account
 
+from apps.tube2drive.models import UploadRequest
+
 
 class Youtube:
     def __init__(self) -> None:
@@ -112,4 +114,4 @@ class Youtube:
             title = response["items"][0]["snippet"]["title"]
             return title
         except Exception:
-            return "Not Found"
+            return UploadRequest.NOT_FOUND

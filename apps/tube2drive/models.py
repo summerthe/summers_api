@@ -14,6 +14,7 @@ class UploadRequest(BaseModel):
     shared folder with service account email.
     """
 
+    NOT_FOUND = "Not Found"
     START_CHOICE = "START"
     RUNNING_CHOICE = "RUNNING"
     COMPLETED_CHOICE = "COMPLETED"
