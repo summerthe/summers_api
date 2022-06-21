@@ -13,14 +13,15 @@ from apps.tube2drive.models import UploadRequest
 User = get_user_model()
 
 
-class UploadRequestViewSet(viewsets.BaseCreateListRetrieveUpdateModelViewSet):
+class UploadRequestViewSet(viewsets.BaseModelViewSet):
     """
     Following Endpoints are created by this modelviewset.
 
     Create: POST `/`
     List: GET `/`
     Retrieve: GET `/<pk>/`
-    Update: PUT `/<pk>/`
+    Update: PUT `/<pk>/` Update is only used internally.
+    Delete: DELETE `/<pk>/`
     """
 
     queryset = UploadRequest.objects.all()
@@ -38,7 +39,7 @@ class UploadRequestViewSet(viewsets.BaseCreateListRetrieveUpdateModelViewSet):
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.user.is_anonymous:
+        if self.action == "update":
             return qs
         qs = qs.filter(user=self.request.user)
         return qs
