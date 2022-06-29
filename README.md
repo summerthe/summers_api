@@ -4,18 +4,14 @@
 
 APIs for following apps.
 
-### user
+### User
 
 App to manage Authenticatation.
 
-### trakt
+### News
 
-Trakt is tracking app to track the tv show you are watching.
+App to find local news, articles and subscribe newsletter.
 
-### locker
-
-Obsidian inspired note app to store notes for personal uses.
-
-### tube2drive
+### Tube2drive
 
 App to download whole youtube playlist and upload to google drive.
