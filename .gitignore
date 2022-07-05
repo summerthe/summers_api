@@ -272,6 +272,7 @@ media/
 .pytest_cache/
 .ipython/
 .env
+.env.production
 .envs/*
 !.envs/.local/
 gcp-service-account.json
