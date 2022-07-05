@@ -13,7 +13,7 @@ from typing import Dict
 import environ
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
 env.read_env(str(BASE_DIR / ".env"))
 
@@ -197,7 +197,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     "https://www.googleapis.com/auth/userinfo.profile",
 ]
 
-
+# For news
 OPENWEATHER_API_KEY = env("OPENWEATHER_API_KEY")
 NEWSDATA_IO_API_KEY = env("NEWSDATA_IO_API_KEY")
 DEFAULT_NEWS_IMAGE_URL = env("DEFAULT_NEWS_IMAGE_URL")
