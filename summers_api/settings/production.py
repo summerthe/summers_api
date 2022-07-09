@@ -1,4 +1,4 @@
-from .base import *  # noqa
+from .base import *  # noqa: F401,F403
 
 # Save only two log files of max 5 mb.
 LOGGING = {
@@ -21,7 +21,7 @@ LOGGING = {
     "formatters": {
         "app": {
             "format": (
-                "%(asctime)s [%(levelname)-8s] " "(%(module)s.%(funcName)s) %(message)s"
+                "%(asctime)s [%(levelname)s]" "(%(module)s.%(funcName)s) %(message)s"
             ),
             "datefmt": "%Y-%m-%d %H:%M:%S",
         },

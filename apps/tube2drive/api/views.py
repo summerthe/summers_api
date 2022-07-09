@@ -14,8 +14,7 @@ User = get_user_model()
 
 
 class UploadRequestViewSet(viewsets.BaseModelViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     Create: POST `/`
     List: GET `/`

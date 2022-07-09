@@ -1,3 +1,5 @@
+import logging
+
 from django.core.management.base import BaseCommand
 
 from apps.news.models import Category
@@ -24,4 +26,4 @@ class Command(BaseCommand):
         for category in categories_list:
             Category.objects.get_or_create(title=category)
 
-        print(f"Created/updated {len(categories_list)} categories")
+        logging.info(f"Created/updated {len(categories_list)} categories")

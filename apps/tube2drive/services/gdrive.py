@@ -41,5 +41,7 @@ class Gdrive:
         media = MediaFileUpload(filename, mimetype="video/*")
         # uploading
         self.drive_client.files().create(
-            body=file_metadata, media_body=media, fields="id"
+            body=file_metadata,
+            media_body=media,
+            fields="id",
         ).execute()

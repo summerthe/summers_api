@@ -1,7 +1,7 @@
 import json
+import logging
 import os
 import time
-import traceback
 
 import googleapiclient
 import googleapiclient.discovery
@@ -20,7 +20,8 @@ def find_playlist_and_upload(
     folder_link: str,
     upload_request_id: int,
 ) -> None:
-    """Find youtube playlist id, download everyvideo and upload to shared gdrive folder.
+    """Find youtube playlist id, download everyvideo and upload to shared
+    gdrive folder.
 
     Parameters
     ----------
@@ -38,9 +39,9 @@ def find_playlist_and_upload(
     try:
         # fetch all video id from youtube
         videos = youtube_api.fetch_youtube_video_ids(playlist_id)
-    except Exception:
+    except Exception as e:
         videos = []
-        traceback.print_exc()
+        logging.error(e, exc_info=True)
 
     if videos is None or len(videos) == 0:
         # if there is no video or playlist is not available set status.
@@ -53,7 +54,7 @@ def find_playlist_and_upload(
             video_title = youtube_api.get_video_title(video)
 
             # make filename with counter as prefix in tmp folder
-            filename = "/tmp/{}-{}".format(counter, video_title)
+            filename = f"/tmp/{counter}-{video_title}"
             # `%` is pain for linux file system, so renaming it
             filename = filename.replace("%", "per")
 
@@ -69,18 +70,18 @@ def find_playlist_and_upload(
                     # upload local file to gdrive
                     gdrive_api = Gdrive()
                     gdrive_api.upload_to_drive(filename, folder_id)
-                except googleapiclient.errors.HttpError:
-                    traceback.print_exc()
+                except googleapiclient.errors.HttpError as e:
+                    logging.error(e, exc_info=True)
                     request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
                     break
-                except Exception:
-                    traceback.print_exc()
+                except Exception as e:
+                    logging.error(e, exc_info=True)
                 finally:
                     # remove file regardless it was uploaded or not.
                     os.remove(filename)
 
-            except Exception:
-                traceback.print_exc()
+            except Exception as e:
+                logging.error(e, exc_info=True)
 
         else:
             # if everything went fine set status to completed
@@ -99,7 +100,8 @@ def update_upload_request_status(pk: int, status: str) -> None:
     status : str
     """
     url = settings.CURRENT_DOMAIN + reverse_lazy(
-        "api:apps.tube2drive:upload-requests-detail", kwargs={"pk": pk}
+        "api:apps.tube2drive:upload-requests-detail",
+        kwargs={"pk": pk},
     )
     payload = json.dumps({"status": status})
     headers = {"App-Own": "", "Content-Type": "application/json"}

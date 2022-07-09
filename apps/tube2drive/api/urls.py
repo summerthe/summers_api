@@ -6,7 +6,7 @@ from . import views
 if settings.DEBUG:
     router = DefaultRouter()
 else:
-    router = SimpleRouter()  # type: ignore
+    router = SimpleRouter()
 
 app_name = "apps.tube2drive"
 

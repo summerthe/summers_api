@@ -1,6 +1,6 @@
+import logging
 import multiprocessing
 import random
-import traceback
 from urllib.parse import parse_qs, urlparse
 
 from django.db.models.signals import post_save
@@ -42,5 +42,5 @@ def slugify_upload_request(sender, instance, *args, **kwargs):
                 ),
             )
             main_proces.start()
-        except Exception:
-            traceback.print_exc()
+        except Exception as e:
+            logging.error(e, exc_info=True)

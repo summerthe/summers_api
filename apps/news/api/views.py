@@ -21,8 +21,7 @@ User = get_user_model()
 
 
 class NewsletterViewSet(viewsets.GenericViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     Subscribe: POST `/subscribe/`
     Unsubscribe: POST `/unsubscribe/`
@@ -58,8 +57,7 @@ class NewsletterViewSet(viewsets.GenericViewSet):
 
 
 class CategoryViewSet(viewsets.BaseListRetrieveModelViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     List : GET `/`
     Get : GET `/<pk>/`
@@ -71,8 +69,7 @@ class CategoryViewSet(viewsets.BaseListRetrieveModelViewSet):
 
 
 class WeatherViewSet(viewsets.GenericViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     Get weather: GET `/get-temp/`
     """
@@ -91,14 +88,14 @@ class WeatherViewSet(viewsets.GenericViewSet):
             ip_address = request.META.get("REMOTE_ADDR")
 
         latlong = requests.get(
-            "https://ipapi.co/{}/latlong/".format(ip_address)
+            f"https://ipapi.co/{ip_address}/latlong/",
         ).text.split(",")
 
         OPENWEATHER_API_KEY = settings.OPENWEATHER_API_KEY
 
         weather = requests.get(
             f"""http://api.openweathermap.org/data/2.5/weather?lat={latlong[0]}&lon={latlong[1]}&appid={
-                OPENWEATHER_API_KEY}"""
+                OPENWEATHER_API_KEY}""",
         ).json()
 
         return Response(
@@ -108,8 +105,7 @@ class WeatherViewSet(viewsets.GenericViewSet):
 
 
 class SavedArticleViewSet(viewsets.BaseCreateListRetrieveModelViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     Create: POST `/`
     List: GET `/`
@@ -125,8 +121,7 @@ class SavedArticleViewSet(viewsets.BaseCreateListRetrieveModelViewSet):
 
 
 class ArticleViewSet(viewsets.GenericViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     List: GET `/`
     """
@@ -162,7 +157,7 @@ class ArticleViewSet(viewsets.GenericViewSet):
 
         if len(results_df) > 0:
             results_df["image_url"] = results_df["image_url"].fillna(
-                settings.DEFAULT_NEWS_IMAGE_URL
+                settings.DEFAULT_NEWS_IMAGE_URL,
             )
             data["results"] = results_df.to_dict("records")
 

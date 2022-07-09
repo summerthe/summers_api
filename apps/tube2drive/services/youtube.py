@@ -1,4 +1,4 @@
-import traceback
+import logging
 from typing import List
 
 import googleapiclient
@@ -52,8 +52,8 @@ class Youtube:
         try:
             for item in response["items"]:
                 video_ids.append(item["snippet"]["resourceId"]["videoId"])
-        except Exception:
-            traceback.print_exc()
+        except Exception as e:
+            logging.error(e, exc_info=True)
 
         # iterating over pagination and fetching all video_ids
         try:
@@ -73,10 +73,10 @@ class Youtube:
                     try:
                         # only extracting video id
                         video_ids.append(item["snippet"]["resourceId"]["videoId"])
-                    except Exception:
-                        traceback.print_exc()
-        except Exception:
-            traceback.print_exc()
+                    except Exception as e:
+                        logging.error(e, exc_info=True)
+        except Exception as e:
+            logging.error(e, exc_info=True)
         return video_ids
 
     def get_video_title(self, video_id: str) -> str:
@@ -108,7 +108,8 @@ class Youtube:
         """
         try:
             request = self.youtube_client.playlists().list(
-                part="snippet", id=playlist_id
+                part="snippet",
+                id=playlist_id,
             )
             response = request.execute()
             title = response["items"][0]["snippet"]["title"]

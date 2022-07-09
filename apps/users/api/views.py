@@ -20,8 +20,7 @@ User = get_user_model()
 
 
 class AuthViewSet(viewsets.BaseCreateModelViewSet):
-    """
-    Following Endpoints are created by this modelviewset.
+    """Following Endpoints are created by this modelviewset.
 
     Create: POST `/`
     Login: POST `/login/`
@@ -60,7 +59,7 @@ class AuthViewSet(viewsets.BaseCreateModelViewSet):
             validate_password(password=serializer.validated_data["password"])
         except ValidationError as err:
             raise exceptions.ValidationError(
-                detail={"password": ast.literal_eval(str(err))}
+                detail={"password": ast.literal_eval(str(err))},
             )
 
         user = serializer.save()
@@ -95,7 +94,7 @@ class AuthViewSet(viewsets.BaseCreateModelViewSet):
             raise InvalidToken(e.args[0])
 
         data = serializer.validated_data
-        data["user"] = UserSerializer(serializer.user).data  # type: ignore
+        data["user"] = UserSerializer(serializer.user).data
         return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path="refresh-token")

@@ -8,7 +8,8 @@ from django.core.files.storage import Storage
 
 
 class CustomFileStorage(Storage):
-    """Custom file storage to upload different content type on different storage platforms."""
+    """Custom file storage to upload different content type on different
+    storage platforms."""
 
     def _open(self, name, mode="rb"):
         return None
@@ -38,7 +39,7 @@ class CustomFileStorage(Storage):
     def exists(self, name: str) -> bool:
         return False
 
-    def url(self, name: Optional[str]) -> Optional[str]:  # type: ignore
+    def url(self, name: Optional[str]) -> Optional[str]:
         return name
 
     def upload_to_imgur(self, thumbnail) -> Optional[str]:

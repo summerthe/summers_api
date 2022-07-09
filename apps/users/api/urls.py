@@ -7,7 +7,7 @@ from apps.users.api import views
 if settings.DEBUG:
     router = DefaultRouter()
 else:
-    router = SimpleRouter()  # type: ignore
+    router = SimpleRouter()
 
 app_name = "apps.users"
 

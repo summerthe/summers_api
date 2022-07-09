@@ -19,7 +19,7 @@ class NewsletterSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         request = self.context.get("request")
-        user = request.user  # type: ignore
+        user = request.user
         return super().save(user=user)
 
 
@@ -44,5 +44,5 @@ class SavedArticleSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         request = self.context.get("request")
-        user = request.user  # type: ignore
+        user = request.user
         return super().save(user=user)

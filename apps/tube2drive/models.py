@@ -10,8 +10,8 @@ User = get_user_model()
 class UploadRequest(BaseModel):
     """Represent single upload request made by user.
 
-    To upload one youtube platlist videos to google drive in
-    shared folder with service account email.
+    To upload one youtube platlist videos to google drive in shared
+    folder with service account email.
     """
 
     NOT_FOUND = "Not Found"

@@ -12,7 +12,7 @@ class YoutubeDownloader:
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
                 info = ydl.extract_info(
-                    "https://www.youtube.com/watch?v={}".format(video),
+                    f"https://www.youtube.com/watch?v={video}",
                     download=False,
                 )
                 formats = sorted(

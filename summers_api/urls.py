@@ -1,5 +1,6 @@
-"""summers_api URL Configuration
-The `urlpatterns` list routes URLs to views. For more information please see:
+"""summers_api URL Configuration The `urlpatterns` list routes URLs to views.
+
+For more information please see:
     https://docs.djangoproject.com/en/4.0/topics/http/urls/
 Examples:
 Function views
@@ -20,6 +21,7 @@ from django.urls import include, path
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("summers_api.api_router")),
-] + static(  # type: ignore
-    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+] + static(
+    settings.MEDIA_URL,
+    document_root=settings.MEDIA_ROOT,
 )
