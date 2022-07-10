@@ -92,8 +92,9 @@ class Youtube:
         """
         request = self.youtube_client.videos().list(part="snippet", id=video_id)
         response = request.execute()
-        title = response["items"][0]["snippet"]["title"]
-        return title
+        if len(response["items"]) > 0:
+            title = response["items"][0]["snippet"]["title"]
+            return title
 
     def get_playlist_title(self, playlist_id: str) -> str:
         """Fetch playlist title using youtube api from playlist id.

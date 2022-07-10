@@ -30,7 +30,8 @@ def find_playlist_and_upload(
     upload_request_id : int
     """
     # hit upload api to update upload request status to running
-    update_upload_request_status(upload_request_id, UploadRequest.RUNNING_CHOICE)
+    request_status = UploadRequest.RUNNING_CHOICE
+    update_upload_request_status(upload_request_id, request_status)
 
     # extracting id from link
     folder_id = folder_link.split("/")[-1]
@@ -42,53 +43,58 @@ def find_playlist_and_upload(
     except Exception as e:
         videos = []
         logging.error(e, exc_info=True)
+    try:
+        if videos is None or len(videos) == 0:
+            # if there is no video or playlist is not available set status.
+            request_status = UploadRequest.PLAYLIST_NOT_FOUND_CHOICE
+        else:
 
-    if videos is None or len(videos) == 0:
-        # if there is no video or playlist is not available set status.
-        request_status = UploadRequest.PLAYLIST_NOT_FOUND_CHOICE
-    else:
+            for counter, video in enumerate(videos, start=1):
+                time.sleep(2)
+                # get video title from youtube
+                video_title = youtube_api.get_video_title(video)
 
-        for counter, video in enumerate(videos, start=1):
-            time.sleep(2)
-            # get video title from youtube
-            video_title = youtube_api.get_video_title(video)
+                if not video_title:
+                    continue
 
-            # make filename with counter as prefix in tmp folder
-            filename = f"/tmp/{counter}-{video_title}"
-            # `%` is pain for linux file system, so renaming it
-            filename = filename.replace("%", "per")
-
-            try:
-                youtube_downloader = YoutubeDownloader()
-                youtube_downloader.download_video(filename, video)
-
-                # yt_dlp upload file with `.webm` extension
-                if not os.path.exists(filename):
-                    filename += ".webm"
+                # make filename with counter as prefix in tmp folder
+                filename = f"/tmp/{counter}-{video_title}"
+                # `%` is pain for linux file system, so renaming it
+                filename = filename.replace("%", "per")
 
                 try:
-                    # upload local file to gdrive
-                    gdrive_api = Gdrive()
-                    gdrive_api.upload_to_drive(filename, folder_id)
-                except googleapiclient.errors.HttpError as e:
-                    logging.error(e, exc_info=True)
-                    request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
-                    break
+                    youtube_downloader = YoutubeDownloader()
+                    youtube_downloader.download_video(filename, video)
+
+                    # yt_dlp upload file with `.webm` extension
+                    if not os.path.exists(filename):
+                        filename += ".webm"
+
+                    try:
+                        # upload local file to gdrive
+                        gdrive_api = Gdrive()
+                        gdrive_api.upload_to_drive(filename, folder_id)
+                    except googleapiclient.errors.HttpError as e:
+                        logging.error(e, exc_info=True)
+                        request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
+                        break
+                    except Exception as e:
+                        logging.error(e, exc_info=True)
+                    finally:
+                        # remove file regardless it was uploaded or not.
+                        os.remove(filename)
+
                 except Exception as e:
                     logging.error(e, exc_info=True)
-                finally:
-                    # remove file regardless it was uploaded or not.
-                    os.remove(filename)
 
-            except Exception as e:
-                logging.error(e, exc_info=True)
-
-        else:
-            # if everything went fine set status to completed
-            request_status = UploadRequest.COMPLETED_CHOICE
-
-    # hit upload api to update upload request status
-    update_upload_request_status(upload_request_id, request_status)
+            else:
+                # if everything went fine set status to completed
+                request_status = UploadRequest.COMPLETED_CHOICE
+    except Exception as e:
+        logging.error(e, exc_info=True)
+    finally:
+        # hit upload api to update upload request status
+        update_upload_request_status(upload_request_id, request_status)
 
 
 def update_upload_request_status(pk: int, status: str) -> None:
