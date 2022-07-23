@@ -10,7 +10,7 @@ from django.template.defaultfilters import slugify
 
 from apps.tube2drive.models import UploadRequest
 from apps.tube2drive.services.youtube import Youtube
-from apps.tube2drive.utils import find_playlist_and_upload
+from apps.tube2drive.utils import find_videos_and_upload
 
 
 @receiver(post_save, sender=UploadRequest)
@@ -32,21 +32,54 @@ def slugify_upload_request(
     """
     if kwargs["created"]:
         # extracting id from link
-        try:
-            playlist_id = parse_qs(urlparse(instance.youtube_link).query)["list"][0]
-        except KeyError:
-            playlist_id = None
+        youtube_entity_type = instance.youtube_entity_type
+        youtube_link = instance.youtube_link
 
         youtube_api = Youtube()
-        youtube_entity_name = (
-            youtube_api.get_playlist_title(playlist_id)
-            if playlist_id
-            else UploadRequest.NOT_FOUND
-        )
+        youtube_entity_id = youtube_entity_name = None
+        query_param = ""
+
+        if youtube_entity_type == UploadRequest.VIDEO:
+            query_param = "v"
+            try:
+                youtube_entity_id = parse_qs(urlparse(youtube_link).query)[query_param][
+                    0
+                ]
+            except (KeyError, IndexError):
+                pass
+
+            if youtube_entity_id:
+                youtube_entity_name = youtube_api.get_video_title(youtube_entity_id)
+
+        elif youtube_entity_type == UploadRequest.PLAYLIST:
+            query_param = "list"
+            try:
+                youtube_entity_id = parse_qs(urlparse(youtube_link).query)[query_param][
+                    0
+                ]
+            except (KeyError, IndexError):
+                pass
+
+            if youtube_entity_id:
+                youtube_entity_name = youtube_api.get_playlist_title(youtube_entity_id)
+
+        elif youtube_entity_type == UploadRequest.CHANNEL:
+            youtube_entity_id = youtube_link.strip("/").split("/")[-1]
+            # Dont run channel getting videos, if passed url if of playlist.
+            if not ("?list=" in youtube_entity_id or "?v=" in youtube_entity_id):
+                youtube_entity_name, youtube_entity_id = youtube_api.get_channel_info(
+                    youtube_entity_id,
+                )
+
+        if not youtube_entity_name:
+            youtube_entity_name = UploadRequest.NOT_FOUND
+            instance.status = getattr(
+                UploadRequest,
+                f"{youtube_entity_type}_NOT_FOUND_CHOICE",
+            )
+
         instance.youtube_entity_name = youtube_entity_name
 
-        if instance.youtube_entity_name == UploadRequest.NOT_FOUND:
-            instance.status = UploadRequest.PLAYLIST_NOT_FOUND_CHOICE
         instance.slug = slugify(
             instance.youtube_entity_name + str(random.randint(0, 9999)),
         )[:400]
@@ -56,9 +89,10 @@ def slugify_upload_request(
         # Starting finding and uploading in background
         try:
             main_process = multiprocessing.Process(
-                target=find_playlist_and_upload,
+                target=find_videos_and_upload,
                 args=(
-                    playlist_id,
+                    youtube_entity_id,
+                    youtube_entity_type,
                     instance.folder_link,
                     instance.pk,
                 ),

@@ -16,8 +16,6 @@ class YoutubeDownloader:
         video_id : str
         """
         ydl_opts = {"outtmpl": filename}
-        # checks whether approx filesize of default format is greater than limit or not,
-        # if file size is greater than find a format which has lesser size than
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
                 info = ydl.extract_info(

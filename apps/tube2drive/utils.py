@@ -15,17 +15,19 @@ from apps.tube2drive.services.youtube import Youtube
 from apps.tube2drive.services.youtube_dl import YoutubeDownloader
 
 
-def find_playlist_and_upload(
-    playlist_id: str,
+def find_videos_and_upload(
+    youtube_entity_id: str,
+    youtube_entity_type: str,
     folder_link: str,
     upload_request_id: int,
 ) -> None:
-    """Find youtube playlist id, download every video and upload to shared
-    google drive folder.
+    """Find youtube video/s of youtube_entity_id, download video/s and upload
+    it/them to shared google drive folder.
 
     Parameters
     ----------
-    playlist_id : str
+    youtube_entity_id : str
+    youtube_entity_type : str
     folder_link : str
     upload_request_id : int
     """
@@ -35,22 +37,33 @@ def find_playlist_and_upload(
 
     # extracting id from link
     folder_id = folder_link.split("/")[-1]
-
+    videos = []
     youtube_api = Youtube()
-    try:
-        # fetch all video id from youtube
-        videos = youtube_api.fetch_youtube_video_ids(playlist_id)
-    except Exception as e:
-        videos = []
-        logging.error(e, exc_info=True)
-    try:
-        if videos is None or len(videos) == 0:
-            # if there is no video or playlist is not available set status.
-            request_status = UploadRequest.PLAYLIST_NOT_FOUND_CHOICE
-        else:
 
+    if youtube_entity_id:
+        try:
+            if youtube_entity_type == UploadRequest.VIDEO:
+                videos.append(youtube_entity_id)
+            elif youtube_entity_type == UploadRequest.PLAYLIST:
+                # fetch all video id from youtube playlist
+                videos = youtube_api.fetch_playlist_videos_id(youtube_entity_id)
+            elif youtube_entity_type == UploadRequest.CHANNEL:
+                # fetch latest [500](https://developers.google.com/youtube/v3/docs/search/list#parameters)
+                # video id from youtube channel
+                videos = youtube_api.fetch_channel_videos_id(youtube_entity_id)
+        except Exception as e:
+            logging.error(e, exc_info=True)
+
+    try:
+        if len(videos) == 0:
+            # if there is no video set status.
+            request_status = getattr(
+                UploadRequest,
+                f"{youtube_entity_type}_NOT_FOUND_CHOICE",
+            )
+        else:
             for counter, video in enumerate(videos, start=1):
-                time.sleep(2)
+                time.sleep(1)
                 # get video title from youtube
                 video_title = youtube_api.get_video_title(video)
 

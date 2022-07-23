@@ -32,8 +32,24 @@ class UploadRequest(BaseModel):
         (CHANNEL_NOT_FOUND_CHOICE, CHANNEL_NOT_FOUND_CHOICE),
     )
 
+    PLAYLIST = "PLAYLIST"
+    CHANNEL = "CHANNEL"
+    VIDEO = "VIDEO"
+
+    YOUTUBE_ENTITY_CHOICES = (
+        (PLAYLIST, PLAYLIST),
+        (CHANNEL, CHANNEL),
+        (VIDEO, VIDEO),
+    )
+
     youtube_link = models.URLField()
     youtube_entity_name = models.CharField(max_length=255, blank=True, null=True)
+    youtube_entity_type = models.CharField(
+        choices=YOUTUBE_ENTITY_CHOICES,
+        max_length=8,
+        default=PLAYLIST,
+        blank=True,
+    )
 
     folder_link = models.URLField()
     status = models.CharField(
