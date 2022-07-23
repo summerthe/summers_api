@@ -7,5 +7,5 @@ djangorestframework-stubs==1.5.0  # https://github.com/typeddjango/djangorestfra
 flake8==4.0.1  # https://github.com/PyCQA/flake8
 flake8-isort==4.1.1  # https://github.com/gforcada/flake8-isort
 mypy # https://github.com/python/mypy
-pre-commit==2.18.1  # https://github.com/pre-commit/pre-commit
+pre-commit==2.20.0  # https://github.com/pre-commit/pre-commit
 psycopg2-binary==2.9.3  # https://github.com/psycopg/psycopg2
