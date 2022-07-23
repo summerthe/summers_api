@@ -1,5 +1,5 @@
 import json
-from typing import Optional
+from typing import IO, Any
 
 import requests
 from django.conf import settings
@@ -11,24 +11,26 @@ class CustomFileStorage(Storage):
     """Custom file storage to upload different content type on different
     storage platforms."""
 
-    def _open(self, name, mode="rb"):
+    def _open(self, name: str, mode: str = "rb") -> None:
         return None
 
-    def _save(self, name, content) -> str:
+    def _save(self, name: str | None, content: IO[Any]) -> str:
         """Upload file to 3rd party storage.
 
         Currently Imgur supported image and videos format are getting upload to Imgur.
 
         Parameters
         ----------
-        name :
-        content :
+        name : str | None
+        content : IO[Any]
 
         Returns
         -------
         str
         """
-        content_type = content.content_type
+        content_type = (
+            content.content_type if hasattr(content, "content_type") else None  # type: ignore[attr-defined]
+        )
         if content_type in settings.IMGUR_SUPPORTED_FORMAT:
             file_url = self.upload_to_imgur(content)
             if file_url:
@@ -39,19 +41,20 @@ class CustomFileStorage(Storage):
     def exists(self, name: str) -> bool:
         return False
 
-    def url(self, name: Optional[str]) -> Optional[str]:
+    def url(self, name: str | None) -> str | None:  # type: ignore[override]
         return name
 
-    def upload_to_imgur(self, thumbnail) -> Optional[str]:
+    def upload_to_imgur(self, thumbnail: IO[Any]) -> str | None:
         """Upload supported imgur files to imgur storage using API.
 
         Parameters
         ----------
-        thumbnail
+        thumbnail : IO[Any]
+
 
         Returns
         -------
-        Optional[str]
+        str | None
         """
         file_in_bytes = File(thumbnail).read()
         data = {"image": file_in_bytes}

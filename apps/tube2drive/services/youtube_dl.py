@@ -5,14 +5,23 @@ import yt_dlp
 
 
 class YoutubeDownloader:
-    def download_video(self, filename, video):
+    """Uses youtube_dl to get youtube file data and download it."""
+
+    def download_video(self, filename: str, video_id: str) -> None:
+        """Download youtube video using youtube_dl and save as `filename`.
+
+        Parameters
+        ----------
+        filename : str
+        video_id : str
+        """
         ydl_opts = {"outtmpl": filename}
         # checks whether approx filesize of default format is greater than limit or not,
-        # if file size is greather than find a format which has lesser size than
+        # if file size is greater than find a format which has lesser size than
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
                 info = ydl.extract_info(
-                    f"https://www.youtube.com/watch?v={video}",
+                    f"https://www.youtube.com/watch?v={video_id}",
                     download=False,
                 )
                 formats = sorted(

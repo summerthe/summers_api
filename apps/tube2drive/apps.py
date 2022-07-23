@@ -9,6 +9,7 @@ class Tube2DriveConfig(AppConfig):
     verbose_name = _("Tube2Drive")
 
     def ready(self) -> None:
+        """Make signals ready on app load."""
         from apps.tube2drive.models import UploadRequest
         from apps.tube2drive.signals import slugify_upload_request
 

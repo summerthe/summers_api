@@ -16,13 +16,19 @@ class UploadRequestSerializer(serializers.ModelSerializer):
             "id",
             "status",
             "user",
-            "guid",
+            "unique_identifier",
             "slug",
         )
 
-    def save(self, **kwargs):
+    def save(self, **kwargs) -> UploadRequest:
+        """Save current logged user for user field.
+
+        Returns
+        -------
+        UploadRequest
+        """
         request = self.context.get("request")
-        user = request.user
+        user = request.user if hasattr(request, "user") else None  # type: ignore[union-attr]
         return super().save(user=user)
 
 

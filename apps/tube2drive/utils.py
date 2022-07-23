@@ -10,7 +10,7 @@ from django.conf import settings
 from django.urls import reverse_lazy
 
 from apps.tube2drive.models import UploadRequest
-from apps.tube2drive.services.gdrive import Gdrive
+from apps.tube2drive.services.google_drive import GoogleDrive
 from apps.tube2drive.services.youtube import Youtube
 from apps.tube2drive.services.youtube_dl import YoutubeDownloader
 
@@ -20,8 +20,8 @@ def find_playlist_and_upload(
     folder_link: str,
     upload_request_id: int,
 ) -> None:
-    """Find youtube playlist id, download everyvideo and upload to shared
-    gdrive folder.
+    """Find youtube playlist id, download every video and upload to shared
+    google drive folder.
 
     Parameters
     ----------
@@ -54,6 +54,7 @@ def find_playlist_and_upload(
                 # get video title from youtube
                 video_title = youtube_api.get_video_title(video)
 
+                # if there is no video title, means video was private or deleted.
                 if not video_title:
                     continue
 
@@ -71,9 +72,9 @@ def find_playlist_and_upload(
                         filename += ".webm"
 
                     try:
-                        # upload local file to gdrive
-                        gdrive_api = Gdrive()
-                        gdrive_api.upload_to_drive(filename, folder_id)
+                        # upload local file to google drive
+                        google_drive_api = GoogleDrive()
+                        google_drive_api.upload_to_drive(filename, folder_id)
                     except googleapiclient.errors.HttpError as e:
                         logging.error(e, exc_info=True)
                         request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE

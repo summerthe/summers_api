@@ -5,7 +5,7 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 from apps.users.api import views
 
 if settings.DEBUG:
-    router = DefaultRouter()
+    router: DefaultRouter | SimpleRouter = DefaultRouter()
 else:
     router = SimpleRouter()
 

@@ -14,4 +14,5 @@ App to find local news, articles and subscribe newsletter.
 
 ### Tube2drive
 
-App to download whole youtube playlist and upload to google drive.
+App to download youtube playlist video, single video or all channel videos
+and then upload to google drive.

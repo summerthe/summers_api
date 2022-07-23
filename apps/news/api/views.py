@@ -2,6 +2,7 @@ import pandas as pd
 import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.db.models.query import QuerySet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -31,13 +32,23 @@ class NewsletterViewSet(viewsets.GenericViewSet):
     serializer_class = NewsletterSerializer
 
     @action(detail=False, methods=["post"], url_path="subscribe")
-    def subscribe(self, request: Request, *args, **kwargs):
-        """Subscriber current user for newsletter."""
+    def subscribe(self, request: Request, *args, **kwargs) -> Response:
+        """Subscriber current logged user for newsletter.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         try:
-            newsletter = Newsletter.objects.get(user=self.request.user)
+            # if newsletter doesn't exist create new for current logged user.
+            newsletter = Newsletter.objects.get(user=self.request.user)  # type: ignore[misc]
         except Newsletter.DoesNotExist:
             newsletter = serializer.save()
 
@@ -47,8 +58,17 @@ class NewsletterViewSet(viewsets.GenericViewSet):
         )
 
     @action(detail=False, methods=["post"], url_path="unsubscribe")
-    def unsubscribe(self, request: Request, *args, **kwargs):
-        """Unsubscriber current user for newsletter."""
+    def unsubscribe(self, request: Request, *args, **kwargs) -> Response:
+        """Unsubscribes current logged user for newsletter.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         newsletter = get_object_or_404(Newsletter, user=self.request.user)
@@ -77,9 +97,17 @@ class WeatherViewSet(viewsets.GenericViewSet):
     permission_classes = (AllowAny,)
 
     @action(detail=False, methods=["get"], url_path="get-temp")
-    def get_temp(self, request: Request, *args, **kwargs):
-        """Get weather data from ip address."""
+    def get_temp(self, request: Request, *args, **kwargs) -> Response:
+        """Get weather data from ip address.
 
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
         x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
 
         if x_forwarded_for:
@@ -87,15 +115,15 @@ class WeatherViewSet(viewsets.GenericViewSet):
         else:
             ip_address = request.META.get("REMOTE_ADDR")
 
-        latlong = requests.get(
+        lat_long = requests.get(
             f"https://ipapi.co/{ip_address}/latlong/",
         ).text.split(",")
 
-        OPENWEATHER_API_KEY = settings.OPENWEATHER_API_KEY
+        OPEN_WEATHER_API_KEY = settings.OPEN_WEATHER_API_KEY
 
         weather = requests.get(
-            f"""http://api.openweathermap.org/data/2.5/weather?lat={latlong[0]}&lon={latlong[1]}&appid={
-                OPENWEATHER_API_KEY}""",
+            f"""http://api.openweathermap.org/data/2.5/weather?lat={lat_long[0]}&lon={lat_long[1]}&appid={
+                OPEN_WEATHER_API_KEY}""",
         ).json()
 
         return Response(
@@ -115,7 +143,13 @@ class SavedArticleViewSet(viewsets.BaseCreateListRetrieveModelViewSet):
     queryset = SavedArticle.objects.all()
     serializer_class = SavedArticleSerializer
 
-    def get_queryset(self):
+    def get_queryset(self) -> QuerySet[SavedArticle]:
+        """Filters SavedArticle for current logged user.
+
+        Returns
+        -------
+        QuerySet[SavedArticle]
+        """
         qs = super().get_queryset()
         return qs.filter(user=self.request.user)
 
@@ -128,10 +162,20 @@ class ArticleViewSet(viewsets.GenericViewSet):
 
     permission_classes = (AllowAny,)
 
-    def list(self, request):
-        NEWSDATA_IO_API_KEY = settings.NEWSDATA_IO_API_KEY
+    def list(self, request: Request, *args, **kwargs) -> Response:
+        """Fetch Article from `https://newsdata.io` API.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        NEWS_DATA_IO_API_KEY = settings.NEWS_DATA_IO_API_KEY
         base_url = (
-            f"https://newsdata.io/api/1/news?apikey={NEWSDATA_IO_API_KEY}&language=en"
+            f"https://newsdata.io/api/1/news?apikey={NEWS_DATA_IO_API_KEY}&language=en"
         )
 
         if query := self.request.GET.get("q"):

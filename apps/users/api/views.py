@@ -94,7 +94,8 @@ class AuthViewSet(viewsets.BaseCreateModelViewSet):
             raise InvalidToken(e.args[0])
 
         data = serializer.validated_data
-        data["user"] = UserSerializer(serializer.user).data
+        if hasattr(serializer, "user"):
+            data["user"] = UserSerializer(serializer.user).data  # type: ignore[attr-defined]
         return Response(data, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=["post"], url_path="refresh-token")

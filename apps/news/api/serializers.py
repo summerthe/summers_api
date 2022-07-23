@@ -17,9 +17,15 @@ class NewsletterSerializer(serializers.ModelSerializer):
             "user",
         )
 
-    def save(self, **kwargs):
+    def save(self, **kwargs) -> Newsletter:
+        """Save current logged user for user field.
+
+        Returns
+        -------
+        Newsletter
+        """
         request = self.context.get("request")
-        user = request.user
+        user = request.user if hasattr(request, "user") else None  # type: ignore[union-attr]
         return super().save(user=user)
 
 
@@ -42,7 +48,13 @@ class SavedArticleSerializer(serializers.ModelSerializer):
             "user",
         )
 
-    def save(self, **kwargs):
+    def save(self, **kwargs) -> SavedArticle:
+        """Save current logged user for user field.
+
+        Returns
+        -------
+        SavedArticle
+        """
         request = self.context.get("request")
-        user = request.user
+        user = request.user if hasattr(request, "user") else None  # type: ignore[union-attr]
         return super().save(user=user)

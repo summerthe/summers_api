@@ -1,5 +1,4 @@
 import logging
-from typing import List
 
 import googleapiclient
 import googleapiclient.discovery
@@ -10,8 +9,13 @@ from apps.tube2drive.models import UploadRequest
 
 
 class Youtube:
+    """Youtube module is to interact with Youtube Data API.
+
+    For more details checkout the [API Reference](https://developers.google.com/youtube/v3/docs).
+    """
+
     def __init__(self) -> None:
-        """Initalize clients."""
+        """Initialize clients."""
         scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
         youtube_api_service_name = "youtube"
         youtube_api_version = "v3"
@@ -26,7 +30,7 @@ class Youtube:
             cache_discovery=False,
         )
 
-    def fetch_youtube_video_ids(self, playlist_id: str) -> List[str]:
+    def fetch_youtube_video_ids(self, playlist_id: str) -> list[str]:
         """Hit youtube playlist api to get list of videos id of playlist.
 
         Parameters
@@ -35,7 +39,7 @@ class Youtube:
 
         Returns
         -------
-        List[str]
+        list[str]
             List of videos id
         """
         responses = []
@@ -79,7 +83,7 @@ class Youtube:
             logging.error(e, exc_info=True)
         return video_ids
 
-    def get_video_title(self, video_id: str) -> str:
+    def get_video_title(self, video_id: str) -> str | None:
         """Fetch video title using youtube api from video id.
 
         Parameters
@@ -88,13 +92,14 @@ class Youtube:
 
         Returns
         -------
-        str
+        str | None
         """
         request = self.youtube_client.videos().list(part="snippet", id=video_id)
         response = request.execute()
         if len(response["items"]) > 0:
             title = response["items"][0]["snippet"]["title"]
             return title
+        return None
 
     def get_playlist_title(self, playlist_id: str) -> str:
         """Fetch playlist title using youtube api from playlist id.

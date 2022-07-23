@@ -16,12 +16,15 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import URLPattern, URLResolver, include, path
 
-urlpatterns = [
+urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("summers_api.api_router")),
-] + static(
-    settings.MEDIA_URL,
-    document_root=settings.MEDIA_ROOT,
-)
+    # unpacking `URLResolver`, could write `[] + static`,
+    # but this unpacking is preferred to fix type hint error between `URLPattern + URLResolver`
+    *static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT,
+    ),
+]

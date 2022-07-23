@@ -9,6 +9,7 @@ class NewsConfig(AppConfig):
     verbose_name = _("News")
 
     def ready(self) -> None:
+        """Make signals ready on app load."""
         from apps.news.models import Category
         from apps.news.signals import slugify_category
 

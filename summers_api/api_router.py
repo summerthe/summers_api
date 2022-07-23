@@ -3,7 +3,7 @@ from django.urls.conf import include, path
 from rest_framework.routers import DefaultRouter, SimpleRouter
 
 if settings.DEBUG:
-    router = DefaultRouter()
+    router: DefaultRouter | SimpleRouter = DefaultRouter()
 else:
     router = SimpleRouter()
 

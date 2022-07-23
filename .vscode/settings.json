@@ -1,4 +1,14 @@
 {
-    "python.formatting.provider": "black",
-    "autoDocstring.docstringFormat": "numpy"
+  "python.formatting.provider": "black",
+  "autoDocstring.docstringFormat": "numpy",
+  "cSpell.words": [
+    "acodec",
+    "fillna",
+    "googleapiclient",
+    "Imgur",
+    "modelviewset",
+    "outtmpl",
+    "vcodec",
+    "viewsets"
+  ]
 }

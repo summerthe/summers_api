@@ -8,7 +8,6 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import json
 from pathlib import Path
-from typing import Dict
 
 import environ
 
@@ -177,7 +176,7 @@ IMGUR_SUPPORTED_FORMAT = [
 
 # GCP
 GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")
-GCP_SERVICE_ACCOUNT_JSON: Dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
+GCP_SERVICE_ACCOUNT_JSON: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
 
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
 
@@ -200,6 +199,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 ]
 
 # For news
-OPENWEATHER_API_KEY = env("OPENWEATHER_API_KEY")
-NEWSDATA_IO_API_KEY = env("NEWSDATA_IO_API_KEY")
+OPEN_WEATHER_API_KEY = env("OPEN_WEATHER_API_KEY")
+NEWS_DATA_IO_API_KEY = env("NEWS_DATA_IO_API_KEY")
 DEFAULT_NEWS_IMAGE_URL = env("DEFAULT_NEWS_IMAGE_URL")

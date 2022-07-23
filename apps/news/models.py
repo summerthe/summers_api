@@ -8,7 +8,7 @@ User = get_user_model()
 
 
 class Newsletter(BaseModel):
-    """Weekly Newsletter subscibered users."""
+    """Weekly Newsletter to subscribe by users."""
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -22,7 +22,7 @@ class Newsletter(BaseModel):
 
 
 class Category(BaseModel):
-    """Categories for articles."""
+    """Categories for Article."""
 
     title = models.CharField(max_length=255, unique=True)
     slug = models.SlugField(unique=True, editable=False)
