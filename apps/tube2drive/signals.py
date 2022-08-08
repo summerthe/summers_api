@@ -65,7 +65,7 @@ def slugify_upload_request(
 
         elif youtube_entity_type == UploadRequest.CHANNEL:
             youtube_entity_id = youtube_link.strip("/").split("/")[-1]
-            # Dont run channel getting videos, if passed url if of playlist.
+            # Dont run channel getting videos, if passed url of playlist.
             if not ("?list=" in youtube_entity_id or "?v=" in youtube_entity_id):
                 youtube_entity_name, youtube_entity_id = youtube_api.get_channel_info(
                     youtube_entity_id,
