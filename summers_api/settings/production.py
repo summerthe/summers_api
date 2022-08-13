@@ -1,6 +1,6 @@
 from .base import *  # noqa: F401,F403
 
-# Save only two log files of max 5 mb.
+# Save only two log files of max 20 mb.
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -12,7 +12,7 @@ LOGGING = {
             "filename": ".django.log",
             "formatter": "app",
             "backupCount": 1,
-            "maxBytes": 5 * 1024 * 1024,  # 5*1024*1024 bytes (5MB)
+            "maxBytes": 20 * 1024 * 1024,  # 20*1024*1024 bytes (20MB)
         },
     },
     "loggers": {

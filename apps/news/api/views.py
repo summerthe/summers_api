@@ -1,5 +1,4 @@
 import pandas as pd
-import requests
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models.query import QuerySet
@@ -11,6 +10,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 
 from apps.base.apis import viewsets
+from apps.common.utils.async_request import AsyncRequest, ResponseType
 from apps.news.api.serializers import (
     CategorySerializer,
     NewsletterSerializer,
@@ -115,16 +115,19 @@ class WeatherViewSet(viewsets.GenericViewSet):
         else:
             ip_address = request.META.get("REMOTE_ADDR")
 
-        lat_long = requests.get(
-            f"https://ipapi.co/{ip_address}/latlong/",
-        ).text.split(",")
+        lat_long = AsyncRequest.run_async(
+            AsyncRequest.get(f"https://ipapi.co/{ip_address}/latlong/"),
+        ).split(",")
 
         OPEN_WEATHER_API_KEY = settings.OPEN_WEATHER_API_KEY
 
-        weather = requests.get(
-            f"""http://api.openweathermap.org/data/2.5/weather?lat={lat_long[0]}&lon={lat_long[1]}&appid={
+        weather = AsyncRequest.run_async(
+            AsyncRequest.get(
+                f"""http://api.openweathermap.org/data/2.5/weather?lat={lat_long[0]}&lon={lat_long[1]}&appid={
                 OPEN_WEATHER_API_KEY}""",
-        ).json()
+                ResponseType.json,
+            ),
+        )
 
         return Response(
             data=weather,
@@ -193,8 +196,12 @@ class ArticleViewSet(viewsets.GenericViewSet):
         if page := self.request.GET.get("page"):
             base_url += f"&page={page}"
 
-        response = requests.get(base_url)
-        data = response.json()
+        data = AsyncRequest.run_async(
+            AsyncRequest.get(
+                base_url,
+                ResponseType.json,
+            ),
+        )
 
         # convert empty image_url to default image.
         results_df = pd.DataFrame(data["results"])

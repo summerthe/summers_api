@@ -5,10 +5,10 @@ import time
 
 import googleapiclient
 import googleapiclient.discovery
-import requests
 from django.conf import settings
 from django.urls import reverse_lazy
 
+from apps.common.utils.async_request import AsyncRequest
 from apps.tube2drive.models import UploadRequest
 from apps.tube2drive.services.google_drive import GoogleDrive
 from apps.tube2drive.services.youtube import Youtube
@@ -123,6 +123,6 @@ def update_upload_request_status(pk: int, status: str) -> None:
         "api:apps.tube2drive:upload-requests-detail",
         kwargs={"pk": pk},
     )
-    payload = json.dumps({"status": status})
+    data = json.dumps({"status": status})
     headers = {"App-Own": "", "Content-Type": "application/json"}
-    requests.request("PUT", url, headers=headers, data=payload)
+    AsyncRequest.run_async(AsyncRequest.put(url, data=data, headers=headers))

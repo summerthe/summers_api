@@ -12,7 +12,9 @@ urlpatterns = [
     path("", include("apps.users.api.urls")),
     path("tube2drive/", include("apps.tube2drive.api.urls")),
     path("news/", include("apps.news.api.urls")),
+    # unpacking `URLResolver`, could write `[] + router.urls`,
+    # but this unpacking is preferred to fix type hint error between `URLPattern + URLResolver`
+    *router.urls,
     # path("trakt/", include("apps.trakt.api.urls")),
     # path("locker/", include("apps.locker.api.urls")),
 ]
-urlpatterns += router.urls
