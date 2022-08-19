@@ -4,7 +4,8 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
 
-from apps.common.utils.async_request import AsyncRequest
+from apps.common.services.amazon_s3 import AmazonS3
+from apps.common.services.imgur import Imgur
 
 
 class CustomFileStorage(Storage):
@@ -31,42 +32,19 @@ class CustomFileStorage(Storage):
         content_type = (
             content.content_type if hasattr(content, "content_type") else None  # type: ignore[attr-defined]
         )
+        # try to upload imgur if the content type is supported by imgur,
+        # otherwise upload to aws s3
         if content_type in settings.IMGUR_SUPPORTED_FORMAT:
-            file_url = self.upload_to_imgur(content)
+            file_in_bytes = File(content).read()
+            file_url = Imgur().upload(file_in_bytes)
             if file_url:
                 return file_url
-        # TODO(summer): upload somewhere else
-        return "somewhere"
+
+        file_url = AmazonS3().upload(file_in_bytes, name)
+        return file_url
 
     def exists(self, name: str) -> bool:
         return False
 
     def url(self, name: str | None) -> str | None:  # type: ignore[override]
         return name
-
-    def upload_to_imgur(self, thumbnail: IO[Any]) -> str | None:
-        """Upload supported imgur files to imgur storage using API.
-
-        Parameters
-        ----------
-        thumbnail : IO[Any]
-
-        Returns
-        -------
-        str | None
-        """
-        file_in_bytes = File(thumbnail).read()
-        data = {"image": file_in_bytes}
-        headers = {"Authorization": f"Client-ID {settings.IMGUR_CLIENT_ID}"}
-
-        response = AsyncRequest.run_async(
-            AsyncRequest.post(
-                settings.IMGUR_UPLOAD_ENDPOINT,
-                data=data,
-                headers=headers,
-            ),
-        )
-
-        if response:
-            return response["data"]["link"]
-        return None
