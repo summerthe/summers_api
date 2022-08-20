@@ -3,8 +3,8 @@ Description=Summers API Startup
 
 [Service]
 User=root
-WorkingDirectory=ABSOLUTE_PROJECT_PATH/summers_api
-ExecStart=/bin/bash -c 'cd ABSOLUTE_PROJECT_PATH/summers_api && git pull origin main && source venv/bin/activate && python3.10 manage.py runserver 0.0.0.0:80'
+WorkingDirectory=/home/ubuntu/projects/summers_api
+ExecStart=/bin/bash -c 'cd /home/ubuntu/projects/summers_api && git pull origin main && source venv/bin/activate && pip3 install -r requirements.txt && python3.10 manage.py runserver 0.0.0.0:80'
 
 [Install]
 WantedBy=multi-user.target
