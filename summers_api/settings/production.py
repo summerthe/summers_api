@@ -1,4 +1,5 @@
 from .base import *  # noqa: F401,F403
+from .base import AWS_S3_ORIGIN, BASE_DIR
 
 # Save only two log files of max 20 mb.
 LOGGING = {
@@ -29,3 +30,9 @@ LOGGING = {
 }
 
 DEBUG = False
+
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+STATIC_URL = AWS_S3_ORIGIN + "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
+WHITENOISE_MANIFEST_STRICT = False

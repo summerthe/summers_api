@@ -37,6 +37,7 @@ DJANGO_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
+    "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
 ]
 THIRD_PARTY_APPS = [
@@ -57,6 +58,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -124,13 +126,15 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
 
-# MEDIA
+
+# STATIC AND MEDIA
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
+
+
 STATIC_URL = "/static/"
-MEDIA_ROOT = str(BASE_DIR / "media")
-# https://docs.djangoproject.com/en/dev/ref/settings/#media-url
-MEDIA_URL = "/media/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
+
 DEFAULT_FILE_STORAGE = "apps.common.storage.CustomFileStorage"
 
 # Default primary key field type
@@ -180,6 +184,8 @@ AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_DEFAULT_REGION = env("AWS_DEFAULT_REGION")
 AWS_S3_BUCKET = env("AWS_S3_BUCKET")
 AWS_S3_ORIGIN = env("AWS_S3_ORIGIN")
+
+CORS_ALLOWED_ORIGINS.append(AWS_S3_ORIGIN)
 
 # GCP
 GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")

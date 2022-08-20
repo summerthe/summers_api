@@ -13,18 +13,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.conf import settings
-from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import URLPattern, URLResolver, include, path
 
 urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
     path("api/v1/", include("summers_api.api_router")),
-    # unpacking `URLResolver`, could write `[] + static`,
-    # but this unpacking is preferred to fix type hint error between `URLPattern + URLResolver`
-    *static(
-        settings.MEDIA_URL,
-        document_root=settings.MEDIA_ROOT,
-    ),
 ]
