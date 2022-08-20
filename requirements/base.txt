@@ -22,5 +22,7 @@ pandas==1.4.3
 Pillow==9.1.0  # https://github.com/python-pillow/Pillow
 python-slugify==6.1.2  # https://github.com/un33k/python-slugify
 rest-social-auth==7.0.0 # https://github.com/st4lk/django-rest-social-auth
+# STATIC files
+whitenoise==6.2.0
 # youtube-dl
 yt-dlp==2022.7.18
