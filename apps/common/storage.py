@@ -4,7 +4,7 @@ from django.conf import settings
 from django.core.files import File
 from django.core.files.storage import Storage
 
-from apps.common.services.amazon_s3 import AmazonS3
+from apps.common.services.aws_s3 import AWS_S3
 from apps.common.services.imgur import Imgur
 
 
@@ -32,15 +32,16 @@ class CustomFileStorage(Storage):
         content_type = (
             content.content_type if hasattr(content, "content_type") else None  # type: ignore[attr-defined]
         )
+        file_in_bytes = File(content).read()
+
         # try to upload imgur if the content type is supported by imgur,
         # otherwise upload to aws s3
         if content_type in settings.IMGUR_SUPPORTED_FORMAT:
-            file_in_bytes = File(content).read()
             file_url = Imgur().upload(file_in_bytes)
             if file_url:
                 return file_url
 
-        file_url = AmazonS3().upload(file_in_bytes, name)
+        file_url = AWS_S3().upload(file_in_bytes, name)
         return file_url
 
     def exists(self, name: str) -> bool:
