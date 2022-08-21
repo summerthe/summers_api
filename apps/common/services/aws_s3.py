@@ -1,3 +1,5 @@
+import logging
+
 import boto3
 from django.conf import settings
 
@@ -24,8 +26,16 @@ class AWS_S3:
         -------
         str
         """
+        try:
+            s3_object = self.client.Object(self.bucket, filename)
+            s3_object.put(Body=file_in_bytes)
+            url = f"{self.object_url_prefix}/{filename}"
+            return url
+        except Exception as e:
+            logger = logging.getLogger("aws")
+            logger.error(e, exc_info=True)
+            logger.error(
+                f"AWS S3 : file upload failed \nException:{e}\nFile: {file_in_bytes}\nFilename: {filename}",
+            )
 
-        s3_object = self.client.Object(self.bucket, filename)
-        s3_object.put(Body=file_in_bytes)
-        url = f"{self.object_url_prefix}/{filename}"
-        return url
+        return None

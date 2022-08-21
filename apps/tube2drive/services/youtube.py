@@ -45,6 +45,7 @@ class Youtube:
         # All videos id
         videos_id = []
         next_page_token = None
+        logger = logging.getLogger("aws")
         # iterating over pagination and fetching all videos_id
         try:
             while True:
@@ -60,7 +61,7 @@ class Youtube:
                         # only extracting video id
                         videos_id.append(item["snippet"]["resourceId"]["videoId"])
                     except Exception as e:
-                        logging.error(e, exc_info=True)
+                        logger.error(e, exc_info=True)
 
                 # If next page token is empty after fetching the results,
                 # means there is no more data to fetch from API.
@@ -68,7 +69,11 @@ class Youtube:
                 if next_page_token is None:
                     break
         except Exception as e:
-            logging.error(e, exc_info=True)
+            logger.error(e, exc_info=True)
+
+        logger.info(
+            f"Youtube API : for playlist: {playlist_id} found videos length: {len(videos_id)}",
+        )
         return videos_id
 
     def fetch_channel_videos_id(self, channel_id: str) -> list[str]:
@@ -86,6 +91,7 @@ class Youtube:
         # All videos id
         videos_id = []
         next_page_token = None
+        logger = logging.getLogger("aws")
         # iterating over pagination and fetching all videos_id
         try:
             while True:
@@ -103,7 +109,7 @@ class Youtube:
                         # only extracting video id
                         videos_id.append(item["id"]["videoId"])
                     except Exception as e:
-                        logging.error(e, exc_info=True)
+                        logger.error(e, exc_info=True)
 
                 # If next page token is empty after fetching the results,
                 # means there is no more data to fetch from API.
@@ -111,7 +117,11 @@ class Youtube:
                 if next_page_token is None:
                     break
         except Exception as e:
-            logging.error(e, exc_info=True)
+            logger.error(e, exc_info=True)
+
+        logger.info(
+            f"Youtube API : for channel_id: {channel_id} found videos length: {len(videos_id)}",
+        )
         return videos_id
 
     def get_video_title(self, video_id: str) -> str | None:
@@ -171,4 +181,8 @@ class Youtube:
             channel_title = channel_snippet["title"]
         except (KeyError, IndexError):
             pass
+        except Exception as e:
+            logger = logging.getLogger("aws")
+            logger.error(e, exc_info=True)
+
         return channel_title, channel_id

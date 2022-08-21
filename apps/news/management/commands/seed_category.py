@@ -25,5 +25,5 @@ class Command(BaseCommand):
 
         for category in categories_list:
             Category.objects.get_or_create(title=category)
-
-        logging.info(f"Created/updated {len(categories_list)} categories")
+        logger = logging.getLogger("aws")
+        logger.info(f"Created/updated {len(categories_list)} categories")
