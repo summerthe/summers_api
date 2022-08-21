@@ -99,5 +99,5 @@ def slugify_upload_request(
             )
             main_process.start()
         except Exception as e:
-
-            logging.error(e, exc_info=True)
+            logger = logging.getLogger("aws")
+            logger.error(e, exc_info=True)

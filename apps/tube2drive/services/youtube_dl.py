@@ -1,3 +1,4 @@
+import logging
 import shutil
 
 import requests
@@ -39,5 +40,6 @@ class YoutubeDownloader:
                             with open(filename, "wb") as f:
                                 shutil.copyfileobj(r.raw, f)
                         break
-            except Exception:
-                pass
+            except Exception as e:
+                logger = logging.getLogger("aws")
+                logger.error(e, exc_info=True)

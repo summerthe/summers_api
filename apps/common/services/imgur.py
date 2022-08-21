@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 
 from apps.common.utils.async_request import AsyncRequest
@@ -28,4 +30,8 @@ class Imgur:
 
         if response:
             return response["data"]["link"]
+        logger = logging.getLogger("aws")
+        logger.error(
+            f"Imgur : file upload failed \nResponse:{response}\nFile: {file_in_bytes}",
+        )
         return None

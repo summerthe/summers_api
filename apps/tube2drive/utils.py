@@ -39,7 +39,7 @@ def find_videos_and_upload(
     folder_id = folder_link.split("/")[-1]
     videos = []
     youtube_api = Youtube()
-
+    logger = logging.getLogger("aws")
     if youtube_entity_id:
         try:
             if youtube_entity_type == UploadRequest.VIDEO:
@@ -52,7 +52,7 @@ def find_videos_and_upload(
                 # video id from youtube channel
                 videos = youtube_api.fetch_channel_videos_id(youtube_entity_id)
         except Exception as e:
-            logging.error(e, exc_info=True)
+            logger.error(e, exc_info=True)
 
     try:
         if len(videos) == 0:
@@ -89,23 +89,23 @@ def find_videos_and_upload(
                         google_drive_api = GoogleDrive()
                         google_drive_api.upload_to_drive(filename, folder_id)
                     except googleapiclient.errors.HttpError as e:
-                        logging.error(e, exc_info=True)
+                        logger.error(e, exc_info=True)
                         request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
                         break
                     except Exception as e:
-                        logging.error(e, exc_info=True)
+                        logger.error(e, exc_info=True)
                     finally:
                         # remove file regardless it was uploaded or not.
                         os.remove(filename)
 
                 except Exception as e:
-                    logging.error(e, exc_info=True)
+                    logger.error(e, exc_info=True)
 
             else:
                 # if everything went fine set status to completed
                 request_status = UploadRequest.COMPLETED_CHOICE
     except Exception as e:
-        logging.error(e, exc_info=True)
+        logger.error(e, exc_info=True)
     finally:
         # hit upload api to update upload request status
         update_upload_request_status(upload_request_id, request_status)
