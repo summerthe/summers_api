@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import time
+from threading import Thread
 
 import googleapiclient
 import googleapiclient.discovery
@@ -31,12 +32,25 @@ def find_videos_and_upload(
     folder_link : str
     upload_request_id : int
     """
-    # hit upload api to update upload request status to running
-    request_status = UploadRequest.RUNNING_CHOICE
-    update_upload_request_status(upload_request_id, request_status)
-
     # extracting id from link
     folder_id = folder_link.split("/")[-1]
+    google_drive_api = GoogleDrive()
+
+    request_status = UploadRequest.RUNNING_CHOICE
+    if not google_drive_api.check_folder_exist(folder_id):
+        request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
+        # if folder is not found or doesnt have permission update status and stop process.
+        Thread(
+            target=lambda: update_upload_request_status(
+                upload_request_id,
+                request_status,
+            ),
+        ).start()
+        return
+
+    # hit upload api to update upload request status to running
+    update_upload_request_status(upload_request_id, request_status)
+
     videos = []
     youtube_api = Youtube()
     logger = logging.getLogger("aws")
@@ -71,6 +85,7 @@ def find_videos_and_upload(
                 if not video_title:
                     continue
 
+                video_title = video_title.replace("/", "-")
                 # make filename with counter as prefix in tmp folder
                 filename = f"/tmp/{counter}-{video_title}"
                 # `%` is pain for linux file system, so renaming it
@@ -86,7 +101,6 @@ def find_videos_and_upload(
 
                     try:
                         # upload local file to google drive
-                        google_drive_api = GoogleDrive()
                         google_drive_api.upload_to_drive(filename, folder_id)
                     except googleapiclient.errors.HttpError as e:
                         logger.error(e, exc_info=True)
@@ -102,13 +116,18 @@ def find_videos_and_upload(
                     logger.error(e, exc_info=True)
 
             else:
-                # if everything went fine set status to completed
+                # if everythng went fine set status to completed
                 request_status = UploadRequest.COMPLETED_CHOICE
     except Exception as e:
         logger.error(e, exc_info=True)
     finally:
         # hit upload api to update upload request status
-        update_upload_request_status(upload_request_id, request_status)
+        Thread(
+            target=lambda: update_upload_request_status(
+                upload_request_id,
+                request_status,
+            ),
+        ).start()
 
 
 def update_upload_request_status(pk: int, status: str) -> None:

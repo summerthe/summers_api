@@ -86,7 +86,7 @@ def slugify_upload_request(
 
         instance.save()
 
-        # Starting finding and uploading in background
+        # Starting finding and uploading in thread
         try:
             main_process = multiprocessing.Process(
                 target=find_videos_and_upload,

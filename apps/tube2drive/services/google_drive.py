@@ -54,3 +54,10 @@ class GoogleDrive:
             media_body=media,
             fields="id",
         ).execute()
+
+    def check_folder_exist(self, folder_id: str) -> bool:
+        try:
+            self.drive_client.files().get(fileId=folder_id).execute()
+            return True
+        except Exception:
+            return False
