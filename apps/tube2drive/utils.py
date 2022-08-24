@@ -93,7 +93,11 @@ def find_videos_and_upload(
 
                 try:
                     youtube_downloader = YoutubeDownloader()
-                    did_download = youtube_downloader.download_video(filename, video)
+                    did_download = youtube_downloader.download_video(
+                        filename,
+                        video,
+                        counter,
+                    )
                     if not did_download:
                         continue
 
