@@ -107,7 +107,6 @@ def find_videos_and_upload(
                     except googleapiclient.errors.HttpError as e:
                         logger.error(e, exc_info=True)
                         request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
-                        break
                     except Exception as e:
                         logger.error(e, exc_info=True)
                     finally:
@@ -117,9 +116,8 @@ def find_videos_and_upload(
                 except Exception as e:
                     logger.error(e, exc_info=True)
 
-            else:
-                # if everythng went fine set status to completed
-                request_status = UploadRequest.COMPLETED_CHOICE
+            # if everythng went fine set status to completed
+            request_status = UploadRequest.COMPLETED_CHOICE
     except Exception as e:
         logger.error(e, exc_info=True)
     finally:
