@@ -20,7 +20,7 @@ class Youtube:
         youtube_api_service_name = "youtube"
         youtube_api_version = "v3"
         credentials = service_account.Credentials.from_service_account_info(
-            settings.GCP_SERVICE_ACCOUNT_JSON,
+            settings.GCP_SERVICE_ACCOUNT_JSON1,
             scopes=scopes,
         )
         self.youtube_client = googleapiclient.discovery.build(

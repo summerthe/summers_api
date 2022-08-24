@@ -93,7 +93,9 @@ def find_videos_and_upload(
 
                 try:
                     youtube_downloader = YoutubeDownloader()
-                    youtube_downloader.download_video(filename, video)
+                    did_download = youtube_downloader.download_video(filename, video)
+                    if not did_download:
+                        continue
 
                     # yt_dlp upload file with `.webm` extension
                     if not os.path.exists(filename):

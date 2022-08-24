@@ -8,7 +8,7 @@ import yt_dlp
 class YoutubeDownloader:
     """Uses youtube_dl to get youtube file data and download it."""
 
-    def download_video(self, filename: str, video_id: str) -> None:
+    def download_video(self, filename: str, video_id: str) -> bool:
         """Download youtube video using youtube_dl and save as `filename`.
 
         Parameters
@@ -16,6 +16,8 @@ class YoutubeDownloader:
         filename : str
         video_id : str
         """
+        logger = logging.getLogger("aws")
+
         ydl_opts = {"outtmpl": filename}
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
@@ -23,6 +25,13 @@ class YoutubeDownloader:
                     f"https://www.youtube.com/watch?v={video_id}",
                     download=False,
                 )
+                # not downloading video if size is greater than 150MB.
+                # filesize_approx is in bytes
+                if info.get("filesize_approx", 0) > 150 * 1024 * 1024:
+                    logger.info(
+                        f"Skipping video `{video_id}` due to oversize {info.get('filesize_approx')}(bytes)",
+                    )
+                    return False
                 formats = sorted(
                     info.get("formats"),
                     key=lambda format: int(format.get("resolution").split("x")[0])
@@ -39,7 +48,7 @@ class YoutubeDownloader:
                         with requests.get(url_to_download, stream=True) as r:
                             with open(filename, "wb") as f:
                                 shutil.copyfileobj(r.raw, f)
-                        break
+                        return True
             except Exception as e:
-                logger = logging.getLogger("aws")
                 logger.error(e, exc_info=True)
+        return False
