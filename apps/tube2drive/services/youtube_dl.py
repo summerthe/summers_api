@@ -3,6 +3,7 @@ import shutil
 
 import requests
 import yt_dlp
+from django.conf import settings
 
 
 class YoutubeDownloader:
@@ -25,9 +26,12 @@ class YoutubeDownloader:
                     f"https://www.youtube.com/watch?v={video_id}",
                     download=False,
                 )
-                # not downloading video if size is greater than 150MB.
+                # not downloading video if size is greater than set limit in MB.
                 # filesize_approx is in bytes
-                if info.get("filesize_approx", 0) > 150 * 1024 * 1024:
+                if (
+                    info.get("filesize_approx", 0)
+                    > settings.YOUTUBE_DL_FILE_LIMIT * 1024 * 1024
+                ):
                     logger.info(
                         f"Skipping video `{video_id}` due to oversize {info.get('filesize_approx')}(bytes)",
                     )
