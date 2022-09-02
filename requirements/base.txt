@@ -1,7 +1,7 @@
 # async requests
 aiohttp[speedups]
 # aws
-boto3==1.24.55
+boto3==1.24.65
 # Django
 # ------------------------------------------------------------------------------
 django==4.1   # https://www.djangoproject.com/
