@@ -96,9 +96,16 @@ WSGI_APPLICATION = "summers_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///summers_api"),
+    "default": {
+        "ENGINE": "djongo",
+        "NAME": "summersapi",
+        "ENFORCE_SCHEMA": False,
+        "ATOMIC_REQUESTS": True,
+        "CLIENT": {
+            "host": env("DATABASE_URL"),
+        },
+    },
 }
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
