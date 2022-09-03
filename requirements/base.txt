@@ -1,34 +1,41 @@
 # async requests
 aiohttp[speedups]
+
 # aws
-boto3==1.24.55
+boto3==1.24.66
+watchtower==3.0.0
+
 # Django
-# ------------------------------------------------------------------------------
 django==4.1   # https://www.djangoproject.com/
 django-cors-headers==3.13.0 # https://github.com/adamchainz/django-cors-headers
 django-environ==0.9.0  # https://github.com/joke2k/django-environ
+
 # Django REST Framework
 djangorestframework==3.13.1  # https://github.com/encode/django-rest-framework
 djangorestframework-simplejwt==5.2.0 # https://github.com/jazzband/djangorestframework-simplejwt
+drf-nested-routers==0.93.4 # https://github.com/alanjds/drf-nested-routers
+
+# Database
 djongo==1.3.6
 dnspython==2.2.1
-drf-nested-routers==0.93.4 # https://github.com/alanjds/drf-nested-routers
-# using fork until rest-social-auth release with django>4.0 compatible
-git+https://github.com/KOliver94/django-rest-social-auth@next
-# GCP
-google-api-core==2.8.2
-google-api-python-client==2.57.0
-google-auth==2.10.0
-pandas==1.4.3
-#Other utils
-Pillow==9.2.0  # https://github.com/python-pillow/Pillow
-# Database
 ## not upgrading pymongo, not compatible with django>4.0
 pymongo==3.12.1
+
+# GCP
+google-api-core==2.10.0
+google-api-python-client==2.58.0
+google-auth==2.11.0
+
+# Other utils
+Pillow==9.2.0  # https://github.com/python-pillow/Pillow
+pandas==1.4.4
 python-slugify==6.1.2  # https://github.com/un33k/python-slugify
 rest-social-auth==7.0.0 # https://github.com/st4lk/django-rest-social-auth
-watchtower==3.0.0
+# using fork until rest-social-auth release with django>4.0 compatible
+git+https://github.com/KOliver94/django-rest-social-auth@next
+
 # STATIC files
 whitenoise==6.2.0
+
 # youtube-dl
-yt-dlp==2022.8.19
+yt-dlp==2022.9.1

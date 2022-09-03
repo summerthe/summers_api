@@ -1,9 +1,8 @@
 -r base.txt
-black==22.6.0 # https://github.com/psf/black
+# Code quality
+black==22.8.0 # https://github.com/psf/black
 django-stubs==1.12.0  # https://github.com/typeddjango/django-stubs
 djangorestframework-stubs==1.7.0  # https://github.com/typeddjango/djangorestframework-stubs
-# Code quality
-# ------------------------------------------------------------------------------
 flake8==5.0.4  # https://github.com/PyCQA/flake8
 flake8-isort==4.2.0  # https://github.com/gforcada/flake8-isort
 mypy # https://github.com/python/mypy
