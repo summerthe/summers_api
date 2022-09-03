@@ -96,9 +96,16 @@ WSGI_APPLICATION = "summers_api.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///summers_api"),
+    "default": {
+        "ENGINE": "djongo",
+        "NAME": "summersapi",
+        "ENFORCE_SCHEMA": False,
+        "ATOMIC_REQUESTS": True,
+        "CLIENT": {
+            "host": env("DATABASE_URL"),
+        },
+    },
 }
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -191,7 +198,13 @@ CORS_ALLOWED_ORIGINS.append(AWS_S3_ORIGIN)
 GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")
 GCP_SERVICE_ACCOUNT_JSON: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
 
+GCP_SERVICE_ACCOUNT_CONTENT1: str = env("GCP_SERVICE_ACCOUNT_CONTENT1")
+GCP_SERVICE_ACCOUNT_JSON1: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT1)
+
+# Utils
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
+YOUTUBE_DL_FILE_LIMIT = env("YOUTUBE_DL_FILE_LIMIT", cast=int)
+
 
 # Social auth
 
