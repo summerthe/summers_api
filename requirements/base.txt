@@ -18,7 +18,7 @@ git+https://github.com/KOliver94/django-rest-social-auth@next
 google-api-core==2.8.2
 google-api-python-client==2.57.0
 google-auth==2.10.0
-pandas==1.4.3
+pandas==1.4.4
 #Other utils
 Pillow==9.2.0  # https://github.com/python-pillow/Pillow
 # Database
