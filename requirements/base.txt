@@ -23,7 +23,7 @@ pymongo==3.12.1
 
 # GCP
 google-api-core==2.10.0
-google-api-python-client==2.58.0
+google-api-python-client==2.61.0
 google-auth==2.11.0
 
 # Other utils
