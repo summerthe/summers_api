@@ -14,6 +14,7 @@ import environ
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 env = environ.Env()
+# Read .env file and set os envs.
 env.read_env(str(BASE_DIR / ".env"))
 
 # Quick-start development settings - unsuitable for production
@@ -27,7 +28,7 @@ SECRET_KEY = env(
 DEBUG = env.bool("DJANGO_DEBUG", False)
 ALLOWED_HOSTS = env.list(
     "DJANGO_ALLOWED_HOSTS",
-    default=["localhost", "0.0.0.0", "127.0.0.1"],
+    default=["localhost", "127.0.0.1"],
 )
 
 # Application definition
@@ -198,13 +199,13 @@ CORS_ALLOWED_ORIGINS.append(AWS_S3_ORIGIN)
 GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")
 GCP_SERVICE_ACCOUNT_JSON: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
 
+# Uses this service account when first one exceedes GCP API usage limit
 GCP_SERVICE_ACCOUNT_CONTENT1: str = env("GCP_SERVICE_ACCOUNT_CONTENT1")
 GCP_SERVICE_ACCOUNT_JSON1: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT1)
 
 # Utils
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
 YOUTUBE_DL_FILE_LIMIT = env("YOUTUBE_DL_FILE_LIMIT", cast=int)
-
 
 # Social auth
 
