@@ -15,6 +15,4 @@ urlpatterns = [
     # unpacking `URLResolver`, could write `[] + router.urls`,
     # but this unpacking is preferred to fix type hint error between `URLPattern + URLResolver`
     *router.urls,
-    # path("trakt/", include("apps.trakt.api.urls")),
-    # path("locker/", include("apps.locker.api.urls")),
 ]
