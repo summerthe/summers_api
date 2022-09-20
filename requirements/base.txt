@@ -24,7 +24,7 @@ pymongo==3.12.1 # https://github.com/mongodb/mongo-python-driver
 # GCP
 google-api-core==2.10.1
 google-api-python-client==2.62.0
-google-auth==2.11.0
+google-auth==2.11.1
 
 # Other utils
 Pillow==9.2.0  # https://github.com/python-pillow/Pillow
