@@ -7,6 +7,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 import json
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -160,12 +161,55 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=10),
+}
+
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
 CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=["http://localhost:8080", "http://127.0.0.1:8080"],
 )
+
+# CSRF
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+# AWS S3 bucket
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_DEFAULT_REGION = env("AWS_DEFAULT_REGION")
+AWS_S3_BUCKET = env("AWS_S3_BUCKET")
+AWS_S3_ORIGIN = env("AWS_S3_ORIGIN")
+
+CORS_ALLOWED_ORIGINS.append(AWS_S3_ORIGIN)
+
+# GCP
+GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")
+GCP_SERVICE_ACCOUNT_JSON: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
+
+# Uses this service account when first one exceedes GCP API usage limit
+GCP_SERVICE_ACCOUNT_CONTENT1: str = env("GCP_SERVICE_ACCOUNT_CONTENT1")
+GCP_SERVICE_ACCOUNT_JSON1: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT1)
+
+# Social auth
+
+# For google
+# https://accounts.google.com/o/oauth2/v2/auth?
+# scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&
+# access_type=offline&
+# include_granted_scopes=true&
+# response_type=code&
+# redirect_uri=redirect_uri&
+# client_id=client_id
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+]
 
 # Imgur API
 IMGUR_CLIENT_ID = env("IMGUR_CLIENT_ID")
@@ -186,49 +230,12 @@ IMGUR_SUPPORTED_FORMAT = [
     "video/mpeg",
 ]
 
-# AWS S3 bucket
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
-AWS_DEFAULT_REGION = env("AWS_DEFAULT_REGION")
-AWS_S3_BUCKET = env("AWS_S3_BUCKET")
-AWS_S3_ORIGIN = env("AWS_S3_ORIGIN")
-
-CORS_ALLOWED_ORIGINS.append(AWS_S3_ORIGIN)
-
-# GCP
-GCP_SERVICE_ACCOUNT_CONTENT: str = env("GCP_SERVICE_ACCOUNT_CONTENT")
-GCP_SERVICE_ACCOUNT_JSON: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT)
-
-# Uses this service account when first one exceedes GCP API usage limit
-GCP_SERVICE_ACCOUNT_CONTENT1: str = env("GCP_SERVICE_ACCOUNT_CONTENT1")
-GCP_SERVICE_ACCOUNT_JSON1: dict[str, str] = json.loads(GCP_SERVICE_ACCOUNT_CONTENT1)
-
-# Utils
-CURRENT_DOMAIN = env("CURRENT_DOMAIN")
-YOUTUBE_DL_FILE_LIMIT = env("YOUTUBE_DL_FILE_LIMIT", cast=int)
-
-# Social auth
-
-# For google
-# https://accounts.google.com/o/oauth2/v2/auth?
-# scope=https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile&
-# access_type=offline&
-# include_granted_scopes=true&
-# response_type=code&
-# redirect_uri=redirect_uri&
-# client_id=client_id
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = env("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = env("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET")
-SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
-    "https://www.googleapis.com/auth/userinfo.email",
-    "https://www.googleapis.com/auth/userinfo.profile",
-]
-
 # For news
 OPEN_WEATHER_API_KEY = env("OPEN_WEATHER_API_KEY")
 NEWS_DATA_IO_API_KEY = env("NEWS_DATA_IO_API_KEY")
 DEFAULT_NEWS_IMAGE_URL = env("DEFAULT_NEWS_IMAGE_URL")
 
-# CSRF
-CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+# Utils
+CURRENT_DOMAIN = env("CURRENT_DOMAIN")
+YOUTUBE_DL_FILE_LIMIT = env("YOUTUBE_DL_FILE_LIMIT", cast=int)
