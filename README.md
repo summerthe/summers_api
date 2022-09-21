@@ -54,3 +54,16 @@ celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1
     ```sh
     sudo systemctl restart summersapi-startup.service
     ```
+
+## Limitation
+
+- Tube2drive
+  - For youtube channel maximum 500 videos can be download.
+
+  - Uploaded file is stored in service account's google drive account
+    and then it is shared with the user's email. This can cause service account's
+    google drive account to exceed the maximum space(15Gb) and drive API can stop
+    to upload further.
+    Temp solution: It is required to delete old files from service account's
+    drive account. To do that run `docs/Delete service account gdrive files.ipynb`
+    file will delete all files. Make sure to download files before deleting.
