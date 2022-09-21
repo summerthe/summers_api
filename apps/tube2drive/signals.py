@@ -1,5 +1,4 @@
 import logging
-import multiprocessing
 import random
 from typing import Type
 from urllib.parse import parse_qs, urlparse
@@ -10,7 +9,7 @@ from django.template.defaultfilters import slugify
 
 from apps.tube2drive.models import UploadRequest
 from apps.tube2drive.services.youtube import Youtube
-from apps.tube2drive.utils import find_videos_and_upload
+from summers_api.celery import app as celery_app
 
 
 @receiver(post_save, sender=UploadRequest)
@@ -88,16 +87,17 @@ def slugify_upload_request(
 
         # Starting finding and uploading in thread
         try:
-            main_process = multiprocessing.Process(
-                target=find_videos_and_upload,
+            celery_app.send_task(
+                "apps.tube2drive.tasks.task_find_videos_and_upload",
                 args=(
                     youtube_entity_id,
                     youtube_entity_type,
                     instance.folder_link,
                     instance.pk,
                 ),
+                queue="tube2drive_queue",
             )
-            main_process.start()
+
         except Exception as e:
             logger = logging.getLogger("aws")
             logger.error(e, exc_info=True)

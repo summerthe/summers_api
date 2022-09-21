@@ -10,9 +10,9 @@ import environ
 from django.core.asgi import get_asgi_application
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Reading env to set `DJANGO_SETTINGS_MODULE`
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
-# Reading env to set `DJANGO_SETTINGS_MODULE`
 env.read_env(str(BASE_DIR / ".env"))
 
 application = get_asgi_application()

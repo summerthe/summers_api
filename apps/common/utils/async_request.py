@@ -73,6 +73,7 @@ class AsyncRequest:
                 data=data,
                 **kwargs,
             ) as response:
+                response.raise_for_status()
                 return await response.json()
 
     @classmethod
@@ -100,6 +101,7 @@ class AsyncRequest:
                 data=data,
                 **kwargs,
             ) as response:
+                response.raise_for_status()
                 return await response.json()
 
     @classmethod
@@ -121,6 +123,8 @@ class AsyncRequest:
             ) as response:
                 if response.status == 200:
                     if return_type == ResponseType.text:
+                        response.raise_for_status()
                         return await response.text()
                     else:
+                        response.raise_for_status()
                         return await response.json()

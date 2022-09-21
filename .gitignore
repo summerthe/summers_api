@@ -276,3 +276,4 @@ media/
 .envs/*
 !.envs/.local/
 gcp-service-account.json
+celerybeat-schedule

@@ -1,8 +1,6 @@
 import json
 import logging
 import os
-import time
-from threading import Thread
 
 import googleapiclient
 import googleapiclient.discovery
@@ -14,6 +12,7 @@ from apps.tube2drive.models import UploadRequest
 from apps.tube2drive.services.google_drive import GoogleDrive
 from apps.tube2drive.services.youtube import Youtube
 from apps.tube2drive.services.youtube_dl import YoutubeDownloader
+from summers_api.celery import app as celery_app
 
 
 def find_videos_and_upload(
@@ -40,12 +39,10 @@ def find_videos_and_upload(
     if not google_drive_api.check_folder_exist(folder_id):
         request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
         # if folder is not found or doesnt have permission update status and stop process.
-        Thread(
-            target=lambda: update_upload_request_status(
-                upload_request_id,
-                request_status,
-            ),
-        ).start()
+        update_upload_request_status(
+            upload_request_id,
+            request_status,
+        )
         return
 
     # hit upload api to update upload request status to running
@@ -62,7 +59,7 @@ def find_videos_and_upload(
                 # fetch all video id from youtube playlist
                 videos = youtube_api.fetch_playlist_videos_id(youtube_entity_id)
             elif youtube_entity_type == UploadRequest.CHANNEL:
-                # fetch latest [500](https://developers.google.com/youtube/v3/docs/search/list#parameters)
+                # fetch latest [500 videos](https://developers.google.com/youtube/v3/docs/search/list#parameters)
                 # video id from youtube channel
                 videos = youtube_api.fetch_channel_videos_id(youtube_entity_id)
         except Exception as e:
@@ -75,65 +72,109 @@ def find_videos_and_upload(
                 UploadRequest,
                 f"{youtube_entity_type}_NOT_FOUND_CHOICE",
             )
-        else:
-            for counter, video in enumerate(videos, start=1):
-                time.sleep(1)
-                # get video title from youtube
-                video_title = youtube_api.get_video_title(video)
-
-                # if there is no video title, means video was private or deleted.
-                if not video_title:
-                    continue
-
-                video_title = video_title.replace("/", "-")
-                # make filename with counter as prefix in tmp folder
-                filename = f"/tmp/{counter}-{video_title}"
-                # `%` is pain for linux file system, so renaming it
-                filename = filename.replace("%", "per")
-
-                try:
-                    youtube_downloader = YoutubeDownloader()
-                    did_download = youtube_downloader.download_video(
-                        filename,
-                        video,
-                        counter,
-                    )
-                    if not did_download:
-                        continue
-
-                    # yt_dlp upload file with `.webm` extension
-                    if not os.path.exists(filename):
-                        filename += ".webm"
-
-                    try:
-                        # upload local file to google drive
-                        google_drive_api.upload_to_drive(filename, folder_id)
-                    except googleapiclient.errors.HttpError as e:
-                        logger.error(e, exc_info=True)
-                        request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
-                        break
-                    except Exception as e:
-                        logger.error(e, exc_info=True)
-                    finally:
-                        # remove file regardless it was uploaded or not.
-                        os.remove(filename)
-
-                except Exception as e:
-                    logger.error(e, exc_info=True)
-
-            else:
-                # if everythng went fine set status to completed
-                request_status = UploadRequest.COMPLETED_CHOICE
-    except Exception as e:
-        logger.error(e, exc_info=True)
-    finally:
-        # hit upload api to update upload request status
-        Thread(
-            target=lambda: update_upload_request_status(
+            # hit upload api to update upload request status
+            update_upload_request_status(
                 upload_request_id,
                 request_status,
-            ),
-        ).start()
+            )
+        else:
+
+            for counter, video in enumerate(videos, start=1):
+                celery_app.send_task(
+                    "apps.tube2drive.tasks.task_download_upload_single",
+                    args=(
+                        video,
+                        upload_request_id,
+                        request_status,
+                        folder_id,
+                        counter,
+                        counter == len(videos),
+                    ),
+                    queue="tube2drive_queue",
+                )
+    except Exception as e:
+        logger.error(e, exc_info=True)
+
+
+def download_upload_single(
+    video: str,
+    upload_request_id: str,
+    request_status: str,
+    folder_id: str,
+    counter: int,
+    is_last: bool,
+) -> str:
+    """Download and upload one single video from youtube to drive.
+
+    Parameters
+    ----------
+    video : str
+    upload_request_id : str
+    request_status : str
+    folder_id : str
+    counter : int
+    is_last : bool
+
+    Returns
+    -------
+    str
+    """
+    # get video title from youtube
+    youtube_api = Youtube()
+    logger = logging.getLogger("aws")
+    video_title = youtube_api.get_video_title(video)
+
+    try:
+        # if there is no video title, means video was private or deleted.
+        if not video_title:
+            return request_status
+
+        video_title = video_title.replace("/", "-")
+        # make filename with counter as prefix in tmp folder
+        filename = f"/tmp/{counter}-{video_title}"
+        # `%` is pain for linux file system, so renaming it
+        filename = filename.replace("%", "per")
+        youtube_downloader = YoutubeDownloader()
+        did_download = youtube_downloader.download_video(
+            filename,
+            video,
+            counter,
+        )
+        if not did_download:
+            return request_status
+
+        # yt_dlp upload file with `.webm` extension
+        if not os.path.exists(filename):
+            filename += ".webm"
+
+        google_drive_api = GoogleDrive()
+        try:
+            # upload local file to google drive
+            google_drive_api.upload_to_drive(filename, folder_id)
+
+            if is_last:
+                request_status = UploadRequest.COMPLETED_CHOICE
+
+        except googleapiclient.errors.HttpError as e:
+            logger.error(e, exc_info=True)
+            request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
+        except Exception as e:
+            logger.error(e, exc_info=True)
+        finally:
+            # remove file regardless it was uploaded or not.
+            os.remove(filename)
+
+    except Exception as e:
+        logger.error(e, exc_info=True)
+
+    finally:
+        if is_last:
+            update_upload_request_status(
+                upload_request_id,
+                request_status,
+            )
+
+    return request_status
 
 
 def update_upload_request_status(pk: int, status: str) -> None:
