@@ -2,7 +2,6 @@ import json
 import logging
 import os
 import time
-from threading import Thread
 
 import googleapiclient
 import googleapiclient.discovery
@@ -40,12 +39,10 @@ def find_videos_and_upload(
     if not google_drive_api.check_folder_exist(folder_id):
         request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
         # if folder is not found or doesnt have permission update status and stop process.
-        Thread(
-            target=lambda: update_upload_request_status(
-                upload_request_id,
-                request_status,
-            ),
-        ).start()
+        update_upload_request_status(
+            upload_request_id,
+            request_status,
+        )
         return
 
     # hit upload api to update upload request status to running
@@ -128,12 +125,10 @@ def find_videos_and_upload(
         logger.error(e, exc_info=True)
     finally:
         # hit upload api to update upload request status
-        Thread(
-            target=lambda: update_upload_request_status(
-                upload_request_id,
-                request_status,
-            ),
-        ).start()
+        update_upload_request_status(
+            upload_request_id,
+            request_status,
+        )
 
 
 def update_upload_request_status(pk: int, status: str) -> None:
