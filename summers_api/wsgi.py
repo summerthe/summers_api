@@ -10,9 +10,9 @@ import environ
 from django.core.wsgi import get_wsgi_application
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Reading env to set `DJANGO_SETTINGS_MODULE`
 BASE_DIR = Path(__file__).resolve().parent.parent
 env = environ.Env()
 env.read_env(str(BASE_DIR / ".env"))
-# Reading env to set `DJANGO_SETTINGS_MODULE`
 
 application = get_wsgi_application()

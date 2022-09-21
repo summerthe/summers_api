@@ -1,9 +1,13 @@
-import os
+from pathlib import Path
 
+import environ
 from celery import Celery
 
-# Set the default Django settings module for the 'celery' program.
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "summers_api.settings.local")
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+# Reading env to set `DJANGO_SETTINGS_MODULE`
+BASE_DIR = Path(__file__).resolve().parent.parent
+env = environ.Env()
+env.read_env(str(BASE_DIR / ".env"))
 
 app = Celery("summers_api")
 
