@@ -49,7 +49,8 @@ celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1
 - Install software dependencies.
 - Clone project at `/home/ubuntu/projects/`.
 - Create virtual env and install dependencies.
-- Create `/etc/systemd/system/summersapi-startup.service` file and run it.
+- Create `/etc/systemd/system/summersapi-startup.service` file, copy
+content of `startup.service` and paste in newly created fiel and run.
 
     ```sh
     sudo systemctl restart summersapi-startup.service
