@@ -42,13 +42,12 @@ class YoutubeDownloader:
                         # not downloading video if size is greater than set limit in MB.
                         # filesize_approx is in bytes
                         if (
-                            format.get("filesize", 0)
-                            or format.get("filesize_approx", 0)
+                            format.get("filesize_approx", 0)
                             > settings.YOUTUBE_DL_FILE_LIMIT * 1024 * 1024
                         ):
                             logger.info(
-                                f"""Skipping {counter} video: `{video_id}` due to oversize {
-                                    format.get('filesize_approx')}(bytes)""",
+                                f"""Skipping {counter} video: `{video_id}` due to oversize,
+                                filesize_approx: {format.get('filesize_approx')}(bytes)""",
                             )
                             return False
                         with requests.get(url_to_download, stream=True) as r:
