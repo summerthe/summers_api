@@ -97,12 +97,6 @@ def slugify_upload_request(
                 ),
                 queue="tube2drive_queue",
             )
-            # find_videos_and_upload(
-            #     youtube_entity_id,
-            #     youtube_entity_type,
-            #     instance.folder_link,
-            #     instance.pk,
-            # )
 
         except Exception as e:
             logger = logging.getLogger("aws")

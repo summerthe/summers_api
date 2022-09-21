@@ -92,18 +92,8 @@ def find_videos_and_upload(
                     ),
                     queue="tube2drive_queue",
                 )
-
-            # else:
-            #     # if everythng went fine set status to completed
-            #     request_status = UploadRequest.COMPLETED_CHOICE
     except Exception as e:
         logger.error(e, exc_info=True)
-    # finally:
-    #     # hit upload api to update upload request status
-    #     update_upload_request_status(
-    #         upload_request_id,
-    #         request_status,
-    #     )
 
 
 def download_upload_single(
@@ -130,7 +120,6 @@ def download_upload_single(
     str
     """
     # get video title from youtube
-
     youtube_api = Youtube()
     logger = logging.getLogger("aws")
     video_title = youtube_api.get_video_title(video)

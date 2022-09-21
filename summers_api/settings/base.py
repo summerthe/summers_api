@@ -95,6 +95,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "summers_api.wsgi.application"
+
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 DATABASES = {
@@ -137,7 +138,6 @@ USE_TZ = True
 
 
 # STATIC AND MEDIA
-# ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#media-root
 
 
@@ -151,8 +151,7 @@ DEFAULT_FILE_STORAGE = "apps.common.storage.CustomFileStorage"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # django-rest-framework
-# -------------------------------------------------------------------------------
-# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
+# https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.TokenAuthentication",
