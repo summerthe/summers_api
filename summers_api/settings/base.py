@@ -49,6 +49,7 @@ THIRD_PARTY_APPS = [
     "social_django",
     "rest_social_auth",
     "corsheaders",
+    "channels",
 ]
 
 LOCAL_APPS = [
@@ -135,6 +136,17 @@ LANGUAGE_CODE = "en-us"
 TIME_ZONE = "UTC"
 USE_I18N = True
 USE_TZ = True
+
+# ASGI
+ASGI_APPLICATION = "summers_api.asgi.application"
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 
 # STATIC AND MEDIA
@@ -245,4 +257,5 @@ DEFAULT_NEWS_IMAGE_URL = env("DEFAULT_NEWS_IMAGE_URL")
 
 # Utils
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
+WS_CURRENT_DOMAIN = env("WS_CURRENT_DOMAIN")
 YOUTUBE_DL_FILE_LIMIT = env("YOUTUBE_DL_FILE_LIMIT", cast=int)

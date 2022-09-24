@@ -26,6 +26,11 @@ pymongo==3.12.1 # https://github.com/mongodb/mongo-python-driver
 celery==5.2.7
 redis==4.3.4
 
+# Django Channels
+channels==3.0.5
+channels_redis==3.4.1
+websockets==10.3
+
 # GCP
 google-api-core==2.10.1
 google-api-python-client==2.62.0

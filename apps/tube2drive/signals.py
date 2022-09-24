@@ -94,6 +94,7 @@ def slugify_upload_request(
                     youtube_entity_type,
                     instance.folder_link,
                     instance.pk,
+                    instance.user.unique_identifier,
                 ),
                 queue="tube2drive_queue",
             )
