@@ -12,6 +12,7 @@ from apps.tube2drive.models import UploadRequest
 from apps.tube2drive.services.google_drive import GoogleDrive
 from apps.tube2drive.services.youtube import Youtube
 from apps.tube2drive.services.youtube_dl import YoutubeDownloader
+from apps.tube2drive.websocket import broadcast_upload_request_update
 from summers_api.celery import app as celery_app
 
 
@@ -20,6 +21,7 @@ def find_videos_and_upload(
     youtube_entity_type: str,
     folder_link: str,
     upload_request_id: int,
+    user_uuid: str,
 ) -> None:
     """Find youtube video/s of youtube_entity_id, download video/s and upload
     it/them to shared google drive folder.
@@ -30,6 +32,7 @@ def find_videos_and_upload(
     youtube_entity_type : str
     folder_link : str
     upload_request_id : int
+    user_uuid : str
     """
     # extracting id from link
     folder_id = folder_link.split("/")[-1]
@@ -42,11 +45,16 @@ def find_videos_and_upload(
         update_upload_request_status(
             upload_request_id,
             request_status,
+            user_uuid,
         )
         return
 
     # hit upload api to update upload request status to running
-    update_upload_request_status(upload_request_id, request_status)
+    update_upload_request_status(
+        upload_request_id,
+        request_status,
+        user_uuid,
+    )
 
     videos = []
     youtube_api = Youtube()
@@ -76,6 +84,7 @@ def find_videos_and_upload(
             update_upload_request_status(
                 upload_request_id,
                 request_status,
+                user_uuid,
             )
         else:
 
@@ -89,6 +98,7 @@ def find_videos_and_upload(
                         folder_id,
                         counter,
                         counter == len(videos),
+                        user_uuid,
                     ),
                     queue="tube2drive_queue",
                 )
@@ -103,6 +113,7 @@ def download_upload_single(
     folder_id: str,
     counter: int,
     is_last: bool,
+    user_uuid: str,
 ) -> str:
     """Download and upload one single video from youtube to drive.
 
@@ -114,6 +125,7 @@ def download_upload_single(
     folder_id : str
     counter : int
     is_last : bool
+    user_uuid : str
 
     Returns
     -------
@@ -123,7 +135,8 @@ def download_upload_single(
     youtube_api = Youtube()
     logger = logging.getLogger("aws")
     video_title = youtube_api.get_video_title(video)
-
+    if is_last:
+        request_status = UploadRequest.COMPLETED_CHOICE
     try:
         # if there is no video title, means video was private or deleted.
         if not video_title:
@@ -151,10 +164,6 @@ def download_upload_single(
         try:
             # upload local file to google drive
             google_drive_api.upload_to_drive(filename, folder_id)
-
-            if is_last:
-                request_status = UploadRequest.COMPLETED_CHOICE
-
         except googleapiclient.errors.HttpError as e:
             logger.error(e, exc_info=True)
             request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
@@ -172,18 +181,24 @@ def download_upload_single(
             update_upload_request_status(
                 upload_request_id,
                 request_status,
+                user_uuid,
             )
 
     return request_status
 
 
-def update_upload_request_status(pk: int, status: str) -> None:
+def update_upload_request_status(
+    pk: int,
+    status: str,
+    user_uuid: str,
+) -> None:
     """Update status of upload request.
 
     Parameters
     ----------
     pk : int
     status : str
+    user_uuid : str
     """
     url = settings.CURRENT_DOMAIN + reverse_lazy(
         "api:apps.tube2drive:upload-requests-detail",
@@ -191,4 +206,7 @@ def update_upload_request_status(pk: int, status: str) -> None:
     )
     data = json.dumps({"status": status})
     headers = {"App-Own": "", "Content-Type": "application/json"}
-    AsyncRequest.run_async(AsyncRequest.put(url, data=data, headers=headers))
+    response = AsyncRequest.run_async(AsyncRequest.put(url, data=data, headers=headers))
+
+    text_respone = json.dumps(response)
+    AsyncRequest.run_async(broadcast_upload_request_update(user_uuid, text_respone))
