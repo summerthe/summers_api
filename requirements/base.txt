@@ -33,7 +33,7 @@ websockets==10.3
 
 # GCP
 google-api-core==2.10.1
-google-api-python-client==2.63.0
+google-api-python-client==2.64.0
 google-auth==2.12.0
 
 # Other utils
