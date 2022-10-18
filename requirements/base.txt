@@ -48,4 +48,4 @@ git+https://github.com/KOliver94/django-rest-social-auth@next
 whitenoise==6.2.0 # https://github.com/evansd/whitenoise
 
 # youtube-dl
-yt-dlp==2022.9.1 # https://github.com/yt-dlp/yt-dlp
+yt-dlp==2022.10.4 # https://github.com/yt-dlp/yt-dlp
