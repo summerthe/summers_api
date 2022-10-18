@@ -27,7 +27,7 @@ celery==5.2.7
 redis==4.3.4
 
 # Django Channels
-channels==3.0.5
+channels==4.0.0
 channels_redis==4.0.0
 websockets==10.3
 
