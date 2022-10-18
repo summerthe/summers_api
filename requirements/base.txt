@@ -28,7 +28,7 @@ redis==4.3.4
 
 # Django Channels
 channels==3.0.5
-channels_redis==3.4.1
+channels_redis==4.0.0
 websockets==10.3
 
 # GCP
