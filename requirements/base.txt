@@ -29,7 +29,7 @@ redis==4.3.4
 # Django Channels
 channels==4.0.0
 channels_redis==4.0.0
-websockets==10.3
+websockets==10.4
 
 # GCP
 google-api-core==2.10.2
