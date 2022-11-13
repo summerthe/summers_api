@@ -42,6 +42,8 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "whitenoise.runserver_nostatic",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+    "django.contrib.sitemaps",
 ]
 THIRD_PARTY_APPS = [
     "rest_framework",
@@ -97,6 +99,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "summers_api.wsgi.application"
+SITE_ID = 1
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
