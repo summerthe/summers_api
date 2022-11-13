@@ -30,6 +30,7 @@ redis==4.3.4
 channels==4.0.0
 channels_redis==4.0.0
 websockets==10.4
+daphne==4.0.0
 
 # GCP
 google-api-core==2.10.2
