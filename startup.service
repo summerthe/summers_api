@@ -4,7 +4,7 @@ Description=Summers API Startup
 [Service]
 User=root
 WorkingDirectory=/home/ubuntu/projects/summers_api
-ExecStart=/bin/bash -c 'cd /home/ubuntu/projects/summers_api && git pull origin main && source venv/bin/activate && pip3 install -r requirements.txt && screen -dmS runCelery celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1 && python3.10 manage.py runserver 0.0.0.0:80'
+ExecStart=/bin/bash -c 'cd /home/ubuntu/projects/summers_api && git pull origin main && source venv/bin/activate && pip3 install -r requirements.txt && screen -dmS runCelery celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1 && python3.11 manage.py runserver 0.0.0.0:80'
 
 [Install]
 WantedBy=multi-user.target
