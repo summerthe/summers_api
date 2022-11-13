@@ -45,7 +45,7 @@ celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1
 
 ## Deployment
 
-- Install python3.10.
+- Install python3.11.
 - Install software dependencies.
 - Clone project at `/home/ubuntu/projects/`.
 - Create virtual env and install dependencies.
