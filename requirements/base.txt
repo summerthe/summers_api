@@ -20,7 +20,7 @@ djongo==1.3.6 # https://github.com/doableware/djongo
 dnspython==2.2.1 # https://github.com/rthalley/dnspython
 ## not upgrading pymongo, not compatible with django>4.0
 # https://stackoverflow.com/questions/70185942/why-i-am-getting-not-implemented-error-database-objects-do-not-implement-truth
-pymongo==3.12.1 # https://github.com/mongodb/mongo-python-driver
+pymongo==4.3.3 # https://github.com/mongodb/mongo-python-driver
 
 # Message queue
 celery==5.2.7
