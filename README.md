@@ -28,33 +28,58 @@ and then upload to google drive.
     sudo apt install redis-server
     ```
 
-### pre-commit
-
-To register `pre-commit` hook before commiting code make sure to install
-`requirements/local.txt`, and then run
-
-```sh
-pre-commit install
-```
-
 ### To start celery queue
 
 ```sh
 celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1
 ```
 
-## Deployment
+## Code safety
+
+Register `pre-commit` hook before commiting code and also
+make sure to install `requirements/local.txt`, and then run
+
+```sh
+pre-commit install
+```
+
+pre-commit ensures that your code doesn't have any syntax error,
+code is formatted, and does some basic code checks before
+you commit your code.
+
+## Deployment without Docker
 
 - Install python3.11.
 - Install software dependencies.
 - Clone project at `/home/ubuntu/projects/`.
 - Create virtual env and install dependencies.
+- Create `.env` file from `.env.example` at the same level as `.env.example`.
 - Create `/etc/systemd/system/summersapi-startup.service` file, copy
-content of `startup.service` and paste in newly created fiel and run.
+content of `startup.service` and paste in file you just created and
+then run.
 
     ```sh
     sudo systemctl restart summersapi-startup.service
     ```
+
+## Setup working env in local and Deployment with Docker
+
+- Install latest version of [Docker](https://docs.docker.com/engine/install/ubuntu/)
+and [docker compose](https://docs.docker.com/compose/install/linux/).
+- Make sure you have created `.env` file from `.env.example`
+at the same level as `.env.example`.
+- Run docker compose command to create image and run containers.
+For development use `docker-compose.debug.yml`.
+
+```sh
+docker compose -f docker-compose.debug.yml up
+```
+
+For deployment in production use `docker-compose.yml`.
+
+```sh
+docker compose -f docker-compose.yml up
+```
 
 ## Limitation
 

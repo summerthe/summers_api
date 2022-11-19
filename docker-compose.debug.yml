@@ -1,0 +1,15 @@
+---
+version: '3.4'
+
+services:
+  api:
+    container_name: summersapi
+    volumes:
+      - .:/app # to see file-changes instantly when developing
+    env_file: .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: [ "sh", "-c", "python manage.py runserver 0.0.0.0:8000" ]
+    ports:
+      - 8000:8000

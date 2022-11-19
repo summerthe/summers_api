@@ -40,7 +40,6 @@ google-auth==2.14.1
 # Other utils
 Pillow==9.3.0  # https://github.com/python-pillow/Pillow
 pandas==1.5.1 # https://pandas.pydata.org/
-python-slugify==6.1.2  # https://github.com/un33k/python-slugify
 rest-social-auth==7.0.0 # https://github.com/st4lk/django-rest-social-auth
 # using fork until rest-social-auth release with django>4.0 compatible
 git+https://github.com/KOliver94/django-rest-social-auth@next

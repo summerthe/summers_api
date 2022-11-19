@@ -1,0 +1,12 @@
+---
+version: '3.4'
+
+services:
+  api:
+    container_name: summersapi
+    env_file: .env
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
