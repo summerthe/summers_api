@@ -1,15 +1,71 @@
 ---
-version: '3.4'
+version: '3.8'
 
 services:
   api:
-    container_name: summersapi
-    volumes:
-      - .:/app # to see file-changes instantly when developing
-    env_file: .env
     build:
       context: .
       dockerfile: ./Dockerfile
+    container_name: summersapi
     command: [ "sh", "-c", "python manage.py runserver 0.0.0.0:8000" ]
+    volumes:
+      - .:/app # to see file-changes instantly when developing
     ports:
       - 8000:8000
+    env_file: .env
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: django_celery_worker
+    command:
+      [
+        "celery",
+        "-A",
+        "summers_api",
+        "worker",
+        "-B",
+        "-l",
+        "INFO",
+        "-Q",
+        "tube2drive_queue",
+        "--concurrency=1"
+      ]
+    volumes:
+      - .:/app # to see file-changes instantly when developing
+    env_file: .env
+    depends_on:
+      - redis
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: django_celery_beat
+    command:
+      [
+        "celery",
+        "-A",
+        "summers_api",
+        "beat",
+        "-B",
+        "-l",
+        "INFO",
+        "-Q",
+        "tube2drive_queue",
+        "--concurrency=1"
+      ]
+    volumes:
+      - .:/app # to see file-changes instantly when developing
+    env_file: .env
+    depends_on:
+      - redis
