@@ -54,11 +54,16 @@ you commit your code.
 - Clone project at `/home/ubuntu/projects/`.
 - Create virtual env and install dependencies.
 - Create `.env` file from `.env.example` at the same level as `.env.example`.
+
+## Create service to startup server
+
 - Create `/etc/systemd/system/summersapi-startup.service` file, copy
-content of `startup.service` and paste in file you just created and
-then run.
+content of `docker-startup.service`(for docker) or
+`startup.service`(without docker) and paste in file
+you just created and then run.
 
     ```sh
+    nano /etc/systemd/system/summersapi-startup.service
     sudo systemctl restart summersapi-startup.service
     ```
 
