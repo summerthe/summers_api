@@ -2,7 +2,7 @@
 aiohttp[speedups]
 
 # aws
-boto3==1.26.12 # https://github.com/boto/boto3
+boto3==1.26.13 # https://github.com/boto/boto3
 watchtower==3.0.0 # https://github.com/kislyuk/watchtower
 
 # Django
@@ -41,6 +41,7 @@ google-auth==2.14.1
 Pillow==9.3.0  # https://github.com/python-pillow/Pillow
 pandas==1.5.1 # https://pandas.pydata.org/
 rest-social-auth==8.0.0 # https://github.com/st4lk/django-rest-social-auth
+
 
 # STATIC files
 whitenoise==6.2.0 # https://github.com/evansd/whitenoise
