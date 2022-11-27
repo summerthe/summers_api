@@ -38,30 +38,8 @@ services:
         "INFO",
         "-Q",
         "tube2drive_queue",
-        "--concurrency=1"
-      ]
-    volumes:
-      - .:/app # to see file-changes instantly when developing
-    env_file: .env
-    depends_on:
-      - redis
-
-  celery_beat:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
-    container_name: django_celery_beat
-    command:
-      [
-        "celery",
-        "-A",
-        "summers_api",
-        "beat",
-        "-B",
-        "-l",
-        "INFO",
-        "-Q",
-        "tube2drive_queue",
+        "-s",
+        "/tmp/celerybeat-schedule",
         "--concurrency=1"
       ]
     volumes:

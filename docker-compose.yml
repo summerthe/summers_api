@@ -31,28 +31,12 @@ services:
         "INFO",
         "-Q",
         "tube2drive_queue",
+        "-s",
+        "/tmp/celerybeat-schedule",
         "--concurrency=1"
       ]
     env_file: .env
     depends_on:
       - redis
 
-  celery_beat:
-    image: summerthe/summers_api
-    container_name: django_celery_beat
-    command:
-      [
-        "celery",
-        "-A",
-        "summers_api",
-        "beat",
-        "-B",
-        "-l",
-        "INFO",
-        "-Q",
-        "tube2drive_queue",
-        "--concurrency=1"
-      ]
-    env_file: .env
-    depends_on:
-      - redis
+ 
