@@ -1,5 +1,5 @@
 ---
-name: Django App requirements and lint error check.
+name: Django App requirements and lint error check
 
 on:
   pull_request:
