@@ -1,11 +1,12 @@
 ---
-name: Build Docker image for django app.
+name: Build Docker image for Django app.
 
+# Only trigger, when the linter workflow succeeded
 on:
-  pull_request:
-    branches: ["main"]
-  push:
-    branches: ["main"]
+  workflow_run:
+    workflows: ["Django App requirements and lint error check"]
+    types:
+      - completed
 
 jobs:
   build:
