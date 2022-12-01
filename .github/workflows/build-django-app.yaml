@@ -7,10 +7,12 @@ on:
     workflows: ["Django App requirements and lint error check"]
     types:
       - completed
+    branches: ["main"]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Checkout Code Repository
         uses: actions/checkout@v3
