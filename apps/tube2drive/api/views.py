@@ -1,7 +1,8 @@
-from typing import Type
+from typing import Any, Type
 
 from django.contrib.auth import get_user_model
 from django.db.models.query import QuerySet
+from rest_framework import status
 from rest_framework.permissions import BasePermission
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -34,7 +35,8 @@ class UploadRequestViewSet(viewsets.BaseModelViewSet):
     def get_permissions(self) -> list[BasePermission]:  # type: ignore[override]
         """Permission class for UploadRequest APIs.
 
-        Allow `update` permission to only App(internally from the server code and not by user).
+        Allow `update` permission for internal.
+        Update API is not called by frontend.
 
         Returns
         -------
@@ -47,7 +49,8 @@ class UploadRequestViewSet(viewsets.BaseModelViewSet):
     def get_serializer_class(self, *args, **kwargs) -> Type[BaseSerializer]:
         """Serializer class for UploadRequest APIs.
 
-        During `update` allow only status update by only App(internally from the server code and not by user)..
+        During `update` allow only status update by only internal.
+        Update API is not called by frontend.
 
         Returns
         -------
@@ -69,12 +72,15 @@ class UploadRequestViewSet(viewsets.BaseModelViewSet):
         qs = super().get_queryset()
         if self.action == "update":
             return qs
-        qs = qs.filter(user=self.request.user)
+
+        if self.request.user.is_authenticated:
+            qs = qs.filter(user=self.request.user)
         return qs
 
     def update(self, request: Request, *args, **kwargs) -> Response:
-        """Update UploadRequest status from only App(internally from the server
-        code and not by user).
+        """Update UploadRequest status internally.
+
+        This API is not called by frontend.
 
         Parameters
         ----------
@@ -86,4 +92,59 @@ class UploadRequestViewSet(viewsets.BaseModelViewSet):
         """
         super().update(request, *args, **kwargs)
         instance = self.get_object()
-        return Response(UploadRequestSerializer(instance).data)
+        return Response(
+            UploadRequestSerializer(instance).data,
+            status=status.HTTP_200_OK,
+        )
+
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Create new upload request.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().create(request, *args, **kwargs)
+
+    def retrieve(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Retrieves single upload requests for user.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().retrieve(request, *args, **kwargs)
+
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Returns list of upload requests for user.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().list(request, *args, **kwargs)
+
+    def destroy(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Delete upload request created by user.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().destroy(request, *args, **kwargs)

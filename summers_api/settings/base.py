@@ -53,6 +53,7 @@ THIRD_PARTY_APPS = [
     "rest_social_auth",
     "corsheaders",
     "channels",
+    "drf_yasg",
 ]
 
 LOCAL_APPS = [
@@ -187,6 +188,18 @@ CORS_ALLOWED_ORIGINS = env.list(
     "CORS_ALLOWED_ORIGINS",
     default=["http://localhost:8080", "http://127.0.0.1:8080"],
 )
+
+# Swagger
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+        },
+    },
+}
 
 # CSRF
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
