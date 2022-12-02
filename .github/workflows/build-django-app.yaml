@@ -12,8 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' && github.ref_name =='main' && github.event.pull_request.merged == 'true' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
+      - name: Echo context
+        run: echo ${{ github }}
       - name: Checkout Code Repository
         uses: actions/checkout@v3
 
