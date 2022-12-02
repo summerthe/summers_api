@@ -10,7 +10,8 @@ class BaseModelViewSet(
     mixins.ListModelMixin,
     GenericViewSet,
 ):
-    pass
+    # not adding `patch`, instead use `put`
+    http_method_names = ["get", "post", "head", "put", "delete"]
 
 
 class BaseCreateModelViewSet(

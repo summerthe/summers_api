@@ -1,3 +1,5 @@
+from typing import Any
+
 import pandas as pd
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -8,6 +10,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import AllowAny
 from rest_framework.request import Request
 from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 
 from apps.base.apis import viewsets
 from apps.common.utils.async_request import AsyncRequest, ResponseType
@@ -87,6 +90,32 @@ class CategoryViewSet(viewsets.BaseListRetrieveModelViewSet):
     serializer_class = CategorySerializer
     permission_classes = (AllowAny,)
 
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Returns all news categories.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Retrieves single news category.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().retrieve(request, *args, **kwargs)
+
 
 class WeatherViewSet(viewsets.GenericViewSet):
     """Following Endpoints are created by this modelviewset.
@@ -95,6 +124,9 @@ class WeatherViewSet(viewsets.GenericViewSet):
     """
 
     permission_classes = (AllowAny,)
+    # providing serializer_class for not using serializer
+    # in generic functions.
+    serializer_class = BaseSerializer
 
     @action(detail=False, methods=["get"], url_path="get-temp")
     def get_temp(self, request: Request, *args, **kwargs) -> Response:
@@ -154,7 +186,48 @@ class SavedArticleViewSet(viewsets.BaseCreateListRetrieveModelViewSet):
         QuerySet[SavedArticle]
         """
         qs = super().get_queryset()
-        return qs.filter(user=self.request.user)
+        if self.request.user.is_authenticated:
+            qs = qs.filter(user=self.request.user)
+        return qs
+
+    def create(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Save `https://newsdata.io` article.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().create(request, *args, **kwargs)
+
+    def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Returns list of saved articles of user.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().list(request, *args, **kwargs)
+
+    def retrieve(self, request: Request, *args: Any, **kwargs: Any) -> Response:
+        """Retrieves single saved article of user.
+
+        Parameters
+        ----------
+        request : Request
+
+        Returns
+        -------
+        Response
+        """
+        return super().retrieve(request, *args, **kwargs)
 
 
 class ArticleViewSet(viewsets.GenericViewSet):
@@ -164,6 +237,9 @@ class ArticleViewSet(viewsets.GenericViewSet):
     """
 
     permission_classes = (AllowAny,)
+    # providing serializer_class for not using serializer
+    # in generic functions.
+    serializer_class = BaseSerializer
 
     def list(self, request: Request, *args, **kwargs) -> Response:
         """Fetch Article from `https://newsdata.io` API.

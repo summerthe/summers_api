@@ -17,6 +17,23 @@ App to find local news, articles and subscribe newsletter.
 App to download youtube playlist videos, single video or all videos from channel
 and then upload to google drive.
 
+## API Access
+
+The API can be access from postman, swagger or redoc.
+
+Access postman collection from here: [Summers API Postman collection](https://www.postman.com/summersapi/workspace/my-workspace/collection/15913943-e1ec43a1-c432-47b7-a273-017647496111).
+
+To access swagger visit `/api/v1/swagger`, and for redoc `api/v1/redoc`.
+
+All the public APIs can be access without any authentication, but for authenticated API the bearer authentication token is required to pass in the header.
+
+For Swagger and redoc get the access token from `/auth/` endpoint by providing valid user's credentials and set it in `Authorize` tab.
+ex. `Bearer ACCESS_TOKEN`
+
+For postman, just like swagger get token from `/auth/` endpoint. Before doing that make sure have selected Postman environment.
+
+After hitting the API you dont have to set token anywhere. It will be set automatically in the postman collection environment.
+
 ## Setup working env in local
 
 ### Install software dependencies
