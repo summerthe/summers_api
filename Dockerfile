@@ -25,7 +25,8 @@ ENV PATH="${PATH}:/home/appuser/.local/bin"
 # Install pip requirements
 COPY requirements.txt .
 COPY requirements ./requirements
-RUN python -m pip install -r requirements.txt
+RUN python -m pip install --upgrade pip setuptools wheel && \
+    python -m pip install -r requirements.txt
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "summers_api.asgi:application"]
