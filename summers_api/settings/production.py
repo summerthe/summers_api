@@ -4,9 +4,12 @@ from .base import *  # noqa: F401,F403
 from .base import (
     AWS_ACCESS_KEY_ID,
     AWS_DEFAULT_REGION,
+    AWS_S3_BUCKET,
     AWS_S3_ORIGIN,
     AWS_SECRET_ACCESS_KEY,
+    AWS_USE_S3_STATIC,
     BASE_DIR,
+    INSTALLED_APPS,
 )
 
 cloudwatch_boto3_client = boto3.client(
@@ -63,8 +66,17 @@ LOGGING = {
 
 DEBUG = False
 
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 STATIC_URL = AWS_S3_ORIGIN + "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-WHITENOISE_MANIFEST_STRICT = False
+# s3 static settings
+if AWS_USE_S3_STATIC:
+    AWS_DEFAULT_ACL = "public-read"
+    AWS_STORAGE_BUCKET_NAME = AWS_S3_BUCKET
+    AWS_S3_OBJECT_PARAMETERS = {"CacheControl": "max-age=86400"}
+    AWS_LOCATION = "static"
+    STATICFILES_STORAGE = "storages.backends.s3boto3.S3ManifestStaticStorage"
+    INSTALLED_APPS += ["storages"]
+else:
+    WHITENOISE_MANIFEST_STRICT = False
+    STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
