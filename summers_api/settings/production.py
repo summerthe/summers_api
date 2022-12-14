@@ -81,3 +81,5 @@ if AWS_USE_S3_STATIC:
 else:
     WHITENOISE_MANIFEST_STRICT = False
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
