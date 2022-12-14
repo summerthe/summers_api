@@ -77,6 +77,7 @@ if AWS_USE_S3_STATIC:
     AWS_LOCATION = "static"
     STATICFILES_STORAGE = "storages.backends.s3boto3.S3ManifestStaticStorage"
     INSTALLED_APPS += ["storages"]
+    AWS_S3_CUSTOM_DOMAIN = AWS_S3_ORIGIN.replace(r"https://", "")
 else:
     WHITENOISE_MANIFEST_STRICT = False
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
