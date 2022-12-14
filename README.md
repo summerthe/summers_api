@@ -23,7 +23,7 @@ The API can be access from postman, swagger or redoc.
 
 Access postman collection from here: [Summers API Postman collection](https://www.postman.com/summersapi/workspace/my-workspace/collection/15913943-e1ec43a1-c432-47b7-a273-017647496111).
 
-To access swagger visit `/api/v1/swagger`, and for redoc `api/v1/redoc`.
+To access swagger visit `/api/v1/swagger`, and for redoc `/api/v1/redoc`.
 
 All the public APIs can be access without any authentication, but for authenticated API the bearer authentication token is required to pass in the header.
 
