@@ -4,7 +4,7 @@ Description=Summers API Docker Startup
 [Service]
 User=root
 WorkingDirectory=/home/ubuntu/projects/summers_api
-ExecStart=/bin/bash -c 'cd /home/ubuntu/projects/summers_api && git pull origin main && docker compose -f docker-compose.yml up'
+ExecStart=/bin/bash -c 'cd /home/ubuntu/projects/summers_api && git pull origin main && docker compose down && docker compose build --pull && docker compose up -d'
 
 [Install]
 WantedBy=multi-user.target
