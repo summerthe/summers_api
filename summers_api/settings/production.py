@@ -10,6 +10,7 @@ from .base import (
     AWS_USE_S3_STATIC,
     BASE_DIR,
     INSTALLED_APPS,
+    SWAGGER_SETTINGS,
 )
 
 cloudwatch_boto3_client = boto3.client(
@@ -82,4 +83,4 @@ else:
     WHITENOISE_MANIFEST_STRICT = False
     STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SWAGGER_SETTINGS["DEFAULT_GENERATOR_CLASS"] = "apps.common.swagger.HttpsSchemaGenerator"
