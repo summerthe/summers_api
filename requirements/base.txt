@@ -2,7 +2,7 @@
 aiohttp[speedups]
 
 # aws
-boto3==1.26.22 # https://github.com/boto/boto3
+boto3==1.26.53 # https://github.com/boto/boto3
 watchtower==3.0.0 # https://github.com/kislyuk/watchtower
 
 # Django
