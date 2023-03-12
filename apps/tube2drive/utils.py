@@ -87,7 +87,6 @@ def find_videos_and_upload(
                 user_uuid,
             )
         else:
-
             for counter, video in enumerate(videos, start=1):
                 celery_app.send_task(
                     "apps.tube2drive.tasks.task_download_upload_single",
