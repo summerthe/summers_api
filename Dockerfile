@@ -1,32 +1,28 @@
-# For more information, please refer to https://aka.ms/vscode-docker-python
-FROM python:3.11-slim
+# Use official Python runtime as a parent image
+FROM python:3.11-slim-buster
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends git gcc libz-dev \
-    && apt-get purge -y --auto-remove \
-    && rm -rf /var/lib/apt/lists/*
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
 
-# Keeps Python from generating .pyc files in the container
-ENV PYTHONDONTWRITEBYTECODE=1
+# Create a directory for the application
+RUN mkdir /app
 
-# Turns off buffering for easier container logging
-ENV PYTHONUNBUFFERED=1
-
+# Set the working directory to /app
 WORKDIR /app
-COPY . /app
 
-# Creates a non-root user with an explicit UID and adds permission to access the /app folder
-# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
-RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
-USER appuser
+# Install dependencies
+COPY requirements.txt /app/
+COPY requirements /app/requirements
 
-ENV PATH="${PATH}:/home/appuser/.local/bin"
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Install pip requirements
-COPY requirements.txt .
-COPY requirements ./requirements
-RUN python -m pip install --upgrade pip setuptools wheel && \
-    python -m pip install -r requirements.txt
+# Copy the current directory contents into the container at /app
+COPY . /app/
+
+# Create a non-root user to run the application
+RUN useradd -u 10001 -m summers && chown -R summers /app
+USER summers
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
 CMD ["daphne", "-b", "0.0.0.0", "-p", "8000", "summers_api.asgi:application"]

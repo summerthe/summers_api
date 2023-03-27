@@ -23,16 +23,16 @@ cloudwatch_boto3_client = boto3.client(
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
-    "root": {"level": "INFO", "handlers": ["file"]},
+    # "root": {"level": "INFO", "handlers": ["file"]},
     "handlers": {
-        "file": {
-            "level": "INFO",
-            "class": "logging.handlers.RotatingFileHandler",
-            "filename": ".django.log",
-            "formatter": "app",
-            "backupCount": 1,
-            "maxBytes": 20 * 1024 * 1024,  # 20*1024*1024 bytes (20MB)
-        },
+        # "file": {
+        #     "level": "INFO",
+        #     "class": "logging.handlers.RotatingFileHandler",
+        #     "filename": ".django.log",
+        #     "formatter": "app",
+        #     "backupCount": 1,
+        #     "maxBytes": 20 * 1024 * 1024,  # 20*1024*1024 bytes (20MB)
+        # },
         "watchtower": {
             "level": "DEBUG",
             "class": "watchtower.CloudWatchLogHandler",
@@ -43,7 +43,7 @@ LOGGING = {
         },
     },
     "loggers": {
-        "django": {"handlers": ["file"], "level": "INFO", "propagate": True},
+        # "django": {"handlers": ["file"], "level": "INFO", "propagate": True},
         "aws": {
             "level": "DEBUG",
             "handlers": ["watchtower"],
