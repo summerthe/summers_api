@@ -12,4 +12,4 @@ _url_router = URLRouter(
     ],
 )
 
-websocket_urlpatterns = [path("tube2drive/", _url_router)]
+websocket_urlpatterns = [path("ws/tube2drive/", _url_router)]
