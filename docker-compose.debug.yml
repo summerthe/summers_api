@@ -13,14 +13,25 @@ services:
     ports:
       - 8000:8000
     env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://localhost:8000/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     depends_on:
       - redis
 
   redis:
     image: redis:7-alpine
+    container_name: summers_redis
     restart: unless-stopped
     ports:
       - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   celery_worker:
     build:
