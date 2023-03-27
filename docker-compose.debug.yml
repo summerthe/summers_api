@@ -21,6 +21,15 @@ services:
     depends_on:
       - redis
 
+  nginx:
+    image: nginx:latest
+    ports:
+      - "81:80"
+    volumes:
+      - ./nginx:/etc/nginx/conf.d
+    depends_on:
+      - api
+
   redis:
     image: redis:7-alpine
     container_name: summers_redis
