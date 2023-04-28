@@ -6,5 +6,5 @@ djangorestframework-stubs==1.9.1  # https://github.com/typeddjango/djangorestfra
 flake8==6.0.0  # https://github.com/PyCQA/flake8
 flake8-isort==6.0.0  # https://github.com/gforcada/flake8-isort
 mypy # https://github.com/python/mypy
-pre-commit==3.1.1  # https://github.com/pre-commit/pre-commit
+pre-commit==3.2.2  # https://github.com/pre-commit/pre-commit
 commitizen==2.42.1 # https://github.com/commitizen-tools/commitizen
