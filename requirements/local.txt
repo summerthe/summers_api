@@ -2,7 +2,7 @@
 # Code quality
 black==23.1.0 # https://github.com/psf/black
 django-stubs==4.2.0  # https://github.com/typeddjango/django-stubs
-djangorestframework-stubs==1.9.1  # https://github.com/typeddjango/djangorestframework-stubs
+djangorestframework-stubs==3.14.0  # https://github.com/typeddjango/djangorestframework-stubs
 flake8==6.0.0  # https://github.com/PyCQA/flake8
 flake8-isort==6.0.0  # https://github.com/gforcada/flake8-isort
 mypy # https://github.com/python/mypy
