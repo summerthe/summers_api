@@ -37,7 +37,7 @@ google-api-python-client==2.93.0
 google-auth==2.16.2
 
 # Other utils
-Pillow==9.4.0  # https://github.com/python-pillow/Pillow
+Pillow==10.0.0  # https://github.com/python-pillow/Pillow
 pandas==1.5.3 # https://pandas.pydata.org/
 rest-social-auth==8.0.0 # https://github.com/st4lk/django-rest-social-auth
 
