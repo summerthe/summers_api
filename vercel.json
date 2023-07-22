@@ -1,0 +1,14 @@
+{
+    "builds": [
+      {
+        "src": "summers_api/wsgi.py",
+        "use": "@vercel/python"
+      }
+    ],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "summers_api/wsgi.py"
+      }
+    ]
+  }
