@@ -87,20 +87,32 @@ def find_videos_and_upload(
                 user_uuid,
             )
         else:
+            from apps.tube2drive.tasks import task_download_upload_single
             for counter, video in enumerate(videos, start=1):
-                celery_app.send_task(
-                    "apps.tube2drive.tasks.task_download_upload_single",
-                    args=(
-                        video,
+                if settings.USE_REDIS:
+                    celery_app.send_task(
+                        "apps.tube2drive.tasks.task_download_upload_single",
+                        args=(
+                            video,
+                            upload_request_id,
+                            request_status,
+                            folder_id,
+                            counter,
+                            counter == len(videos),
+                            user_uuid,
+                        ),
+                        queue="tube2drive_queue",
+                    )
+                else:
+                    from threading import Thread
+                    Thread(target=task_download_upload_single, args=(video,
                         upload_request_id,
                         request_status,
                         folder_id,
                         counter,
                         counter == len(videos),
                         user_uuid,
-                    ),
-                    queue="tube2drive_queue",
-                )
+                    )).start()
     except Exception as e:
         logger.error(e, exc_info=True)
 
@@ -208,4 +220,8 @@ def update_upload_request_status(
     response = AsyncRequest.run_async(AsyncRequest.put(url, data=data, headers=headers))
 
     text_respone = json.dumps(response)
-    AsyncRequest.run_async(broadcast_upload_request_update(user_uuid, text_respone))
+    try:
+        # TODO: This returns 500 in local
+        AsyncRequest.run_async(broadcast_upload_request_update(user_uuid, text_respone))
+    except Exception:
+        pass
