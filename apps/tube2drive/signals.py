@@ -2,14 +2,15 @@ import logging
 import random
 from typing import Type
 from urllib.parse import parse_qs, urlparse
-from django.conf import settings
 
+from django.conf import settings
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
-from apps.tube2drive.tasks import task_find_videos_and_upload
+
 from apps.tube2drive.models import UploadRequest
 from apps.tube2drive.services.youtube import Youtube
+from apps.tube2drive.tasks import task_find_videos_and_upload
 from summers_api.celery import app as celery_app
 
 
@@ -90,25 +91,29 @@ def slugify_upload_request(
         try:
             if settings.USE_REDIS:
                 celery_app.send_task(
-                "apps.tube2drive.tasks.task_find_videos_and_upload",
-                args=(
-                    youtube_entity_id,
-                    youtube_entity_type,
-                    instance.folder_link,
-                    instance.pk,
-                    instance.user.unique_identifier,
-                ),
-                queue="tube2drive_queue",
-            )
+                    "apps.tube2drive.tasks.task_find_videos_and_upload",
+                    args=(
+                        youtube_entity_id,
+                        youtube_entity_type,
+                        instance.folder_link,
+                        instance.pk,
+                        instance.user.unique_identifier,
+                    ),
+                    queue="tube2drive_queue",
+                )
             else:
                 from threading import Thread
-                Thread(target=task_find_videos_and_upload,args=(
-                    youtube_entity_id,
-                    youtube_entity_type,
-                    instance.folder_link,
-                    instance.pk,
-                    instance.user.unique_identifier
-                )).start()
+
+                Thread(
+                    target=task_find_videos_and_upload,
+                    args=(
+                        youtube_entity_id,
+                        youtube_entity_type,
+                        instance.folder_link,
+                        instance.pk,
+                        instance.user.unique_identifier,
+                    ),
+                ).start()
 
         except Exception as e:
             logger = logging.getLogger("aws")
