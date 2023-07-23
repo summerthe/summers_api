@@ -1,7 +1,7 @@
 import json
 import logging
 import os
-
+from threading import Thread
 import googleapiclient
 import googleapiclient.discovery
 from django.conf import settings
@@ -104,15 +104,16 @@ def find_videos_and_upload(
                         queue="tube2drive_queue",
                     )
                 else:
-                    from threading import Thread
-                    Thread(target=task_download_upload_single, args=(video,
+                    th = Thread(target=task_download_upload_single, args=(video,
                         upload_request_id,
                         request_status,
                         folder_id,
                         counter,
                         counter == len(videos),
                         user_uuid,
-                    )).start()
+                    ))
+                    th.start()
+                    th.join()
     except Exception as e:
         logger.error(e, exc_info=True)
 
