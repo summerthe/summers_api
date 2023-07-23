@@ -2,6 +2,7 @@ import json
 import logging
 import os
 from threading import Thread
+
 import googleapiclient
 import googleapiclient.discovery
 from django.conf import settings
@@ -88,6 +89,7 @@ def find_videos_and_upload(
             )
         else:
             from apps.tube2drive.tasks import task_download_upload_single
+
             for counter, video in enumerate(videos, start=1):
                 if settings.USE_REDIS:
                     celery_app.send_task(
@@ -104,14 +106,18 @@ def find_videos_and_upload(
                         queue="tube2drive_queue",
                     )
                 else:
-                    th = Thread(target=task_download_upload_single, args=(video,
-                        upload_request_id,
-                        request_status,
-                        folder_id,
-                        counter,
-                        counter == len(videos),
-                        user_uuid,
-                    ))
+                    th = Thread(
+                        target=task_download_upload_single,
+                        args=(
+                            video,
+                            upload_request_id,
+                            request_status,
+                            folder_id,
+                            counter,
+                            counter == len(videos),
+                            user_uuid,
+                        ),
+                    )
                     th.start()
                     th.join()
     except Exception as e:
