@@ -32,7 +32,7 @@ websockets==10.4
 daphne==4.0.0
 
 # GCP
-google-api-core==2.11.0
+google-api-core==2.11.1
 google-api-python-client==2.93.0
 google-auth==2.22.0
 
