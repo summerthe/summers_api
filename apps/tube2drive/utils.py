@@ -161,8 +161,17 @@ def download_upload_single(
             return request_status
 
         video_title = video_title.replace("/", "-")
+
+        # create path if storing video locally
+        if settings.STORE_TUBE2DRIVE_LOCAL:
+            video_root_folder = settings.TUBE2DRIVE_LOCAL_FOLDER
+            if not os.path.exists(video_root_folder):
+                os.makedirs(video_root_folder)
+        else:
+            video_root_folder = "/tmp"
+
         # make filename with counter as prefix in tmp folder
-        filename = f"/tmp/{counter}-{video_title}"
+        filename = f"{video_root_folder}/{counter}-{video_title}.webm"
         # `%` is pain for linux file system, so renaming it
         filename = filename.replace("%", "per")
         youtube_downloader = YoutubeDownloader()
@@ -178,18 +187,19 @@ def download_upload_single(
         if not os.path.exists(filename):
             filename += ".webm"
 
-        google_drive_api = GoogleDrive()
-        try:
-            # upload local file to google drive
-            google_drive_api.upload_to_drive(filename, folder_id)
-        except googleapiclient.errors.HttpError as e:
-            logger.error(e, exc_info=True)
-            request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
-        except Exception as e:
-            logger.error(e, exc_info=True)
-        finally:
-            # remove file regardless it was uploaded or not.
-            os.remove(filename)
+        if not settings.STORE_TUBE2DRIVE_LOCAL:
+            google_drive_api = GoogleDrive()
+            try:
+                # upload local file to google drive
+                google_drive_api.upload_to_drive(filename, folder_id)
+            except googleapiclient.errors.HttpError as e:
+                logger.error(e, exc_info=True)
+                request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
+            except Exception as e:
+                logger.error(e, exc_info=True)
+            finally:
+                # remove file regardless it was uploaded or not.
+                os.remove(filename)
 
     except Exception as e:
         logger.error(e, exc_info=True)
