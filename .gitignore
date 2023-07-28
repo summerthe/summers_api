@@ -277,3 +277,4 @@ media/
 !.envs/.local/
 gcp-service-account.json
 celerybeat-schedule
+data/tube2drive
