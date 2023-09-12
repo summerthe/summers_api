@@ -48,7 +48,7 @@ After hitting the API you dont have to set token anywhere. It will be set automa
 ### To start celery queue
 
 ```sh
-celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=1
+celery -A summers_api worker -B -l INFO -Q tube2drive_queue --concurrency=10
 ```
 
 ## Code safety

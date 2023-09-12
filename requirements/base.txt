@@ -22,7 +22,7 @@ dnspython==2.4.1 # https://github.com/rthalley/dnspython
 pymongo==3.12.3 # https://github.com/mongodb/mongo-python-driver
 
 # Message queue
-celery==5.2.7
+celery==5.3.4
 redis==4.6.0
 
 # Django Channels
@@ -38,7 +38,7 @@ google-auth==2.22.0
 
 # Other utils
 Pillow==10.0.0  # https://github.com/python-pillow/Pillow
-pandas==1.5.3 # https://pandas.pydata.org/
+pandas==2.1.0 # https://pandas.pydata.org/
 rest-social-auth==8.0.0 # https://github.com/st4lk/django-rest-social-auth
 
 

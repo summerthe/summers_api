@@ -41,8 +41,10 @@ class YoutubeDownloader:
                         url_to_download = format.get("url")
                         # not downloading video if size is greater than set limit in MB.
                         # filesize_approx is in bytes
+                        # not ristricting for local download
                         if (
-                            format.get("filesize_approx", 0)
+                            not settings.STORE_TUBE2DRIVE_LOCAL
+                            and format.get("filesize_approx", 0)
                             > settings.YOUTUBE_DL_FILE_LIMIT * 1024 * 1024
                         ):
                             logger.info(
