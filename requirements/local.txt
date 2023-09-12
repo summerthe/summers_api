@@ -3,7 +3,7 @@
 black==23.7.0 # https://github.com/psf/black
 django-stubs==4.2.0  # https://github.com/typeddjango/django-stubs
 djangorestframework-stubs==3.14.0  # https://github.com/typeddjango/djangorestframework-stubs
-flake8==6.0.0  # https://github.com/PyCQA/flake8
+flake8==6.1.0  # https://github.com/PyCQA/flake8
 flake8-isort==6.0.0  # https://github.com/gforcada/flake8-isort
 mypy # https://github.com/python/mypy
 pre-commit==3.4.0  # https://github.com/pre-commit/pre-commit
