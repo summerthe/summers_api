@@ -7,4 +7,4 @@ flake8==6.1.0  # https://github.com/PyCQA/flake8
 flake8-isort==6.0.0  # https://github.com/gforcada/flake8-isort
 mypy # https://github.com/python/mypy
 pre-commit==3.4.0  # https://github.com/pre-commit/pre-commit
-commitizen==2.42.1 # https://github.com/commitizen-tools/commitizen
+commitizen==3.12.0 # https://github.com/commitizen-tools/commitizen
