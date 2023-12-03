@@ -20,10 +20,19 @@ class YoutubeDownloader:
         logger = logging.getLogger("aws")
 
         ydl_opts = {"outtmpl": filename}
+
+        if settings.DOWNLOAD_BEST_QUALITY and settings.STORE_TUBE2DRIVE_LOCAL:
+            ydl_opts["format"] = "bestvideo[ext=mp4]+bestaudio[ext=mp4]/best[ext=mp4]"
+
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             try:
+                youtube_video_url = f"https://www.youtube.com/watch?v={video_id}"
+                if settings.DOWNLOAD_BEST_QUALITY and settings.STORE_TUBE2DRIVE_LOCAL:
+                    ydl.download([youtube_video_url])
+                    return True
+
                 info = ydl.extract_info(
-                    f"https://www.youtube.com/watch?v={video_id}",
+                    youtube_video_url,
                     download=False,
                 )
                 formats = sorted(

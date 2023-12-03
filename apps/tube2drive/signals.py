@@ -95,6 +95,7 @@ def slugify_upload_request(
                     args=(
                         youtube_entity_id,
                         youtube_entity_type,
+                        youtube_entity_name,
                         instance.folder_link,
                         instance.pk,
                         instance.user.unique_identifier,
@@ -109,6 +110,7 @@ def slugify_upload_request(
                     args=(
                         youtube_entity_id,
                         youtube_entity_type,
+                        youtube_entity_name,
                         instance.folder_link,
                         instance.pk,
                         instance.user.unique_identifier,

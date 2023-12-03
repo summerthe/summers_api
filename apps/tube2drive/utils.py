@@ -20,6 +20,7 @@ from summers_api.celery import app as celery_app
 def find_videos_and_upload(
     youtube_entity_id: str,
     youtube_entity_type: str,
+    youtube_entity_name: str,
     folder_link: str,
     upload_request_id: int,
     user_uuid: str,
@@ -31,6 +32,7 @@ def find_videos_and_upload(
     ----------
     youtube_entity_id : str
     youtube_entity_type : str
+    youtube_entity_name : str
     folder_link : str
     upload_request_id : int
     user_uuid : str
@@ -40,7 +42,9 @@ def find_videos_and_upload(
     google_drive_api = GoogleDrive()
 
     request_status = UploadRequest.RUNNING_CHOICE
-    if not google_drive_api.check_folder_exist(folder_id):
+    if not settings.STORE_TUBE2DRIVE_LOCAL and not google_drive_api.check_folder_exist(
+        folder_id,
+    ):
         request_status = UploadRequest.FOLDER_NOT_FOUND_CHOICE
         # if folder is not found or doesnt have permission update status and stop process.
         update_upload_request_status(
@@ -97,6 +101,8 @@ def find_videos_and_upload(
                         args=(
                             video,
                             upload_request_id,
+                            youtube_entity_type,
+                            youtube_entity_name,
                             request_status,
                             folder_id,
                             counter,
@@ -111,6 +117,8 @@ def find_videos_and_upload(
                         args=(
                             video,
                             upload_request_id,
+                            youtube_entity_type,
+                            youtube_entity_name,
                             request_status,
                             folder_id,
                             counter,
@@ -127,6 +135,8 @@ def find_videos_and_upload(
 def download_upload_single(
     video: str,
     upload_request_id: str,
+    youtube_entity_type: str,
+    youtube_entity_name: str,
     request_status: str,
     folder_id: str,
     counter: int,
@@ -139,6 +149,8 @@ def download_upload_single(
     ----------
     video : str
     upload_request_id : str
+    youtube_entity_type: str
+    youtube_entity_name: str
     request_status : str
     folder_id : str
     counter : int
@@ -162,16 +174,21 @@ def download_upload_single(
 
         video_title = video_title.replace("/", "-")
 
-        # create path if storing video locally
+        # create path if storing video locally within root_folder / playlist_or_channel_name
         if settings.STORE_TUBE2DRIVE_LOCAL:
-            video_root_folder = settings.TUBE2DRIVE_LOCAL_FOLDER
-            if not os.path.exists(video_root_folder):
-                os.makedirs(video_root_folder)
+            video_folder = settings.TUBE2DRIVE_LOCAL_FOLDER / get_entity_folder(
+                youtube_entity_type,
+                youtube_entity_name,
+            )
+            if not os.path.exists(video_folder):
+                os.makedirs(video_folder)
         else:
-            video_root_folder = "/tmp"
+            video_folder = "/tmp"
 
         # make filename with counter as prefix in tmp folder
-        filename = f"{video_root_folder}/{counter}-{video_title}.webm"
+        filename = f"{video_folder}/{counter}-{video_title}.webm"
+        if settings.DOWNLOAD_BEST_QUALITY:
+            filename = f"{video_folder}/{counter}-{video_title}.mp4"
         # `%` is pain for linux file system, so renaming it
         filename = filename.replace("%", "per")
         youtube_downloader = YoutubeDownloader()
@@ -242,3 +259,20 @@ def update_upload_request_status(
         AsyncRequest.run_async(broadcast_upload_request_update(user_uuid, text_respone))
     except Exception:
         pass
+
+
+def get_entity_folder(youtube_entity_type: str, youtube_entity_name: str):
+    """Returns entity folder name based on youtube_entity_type.
+
+    Parameters
+    ----------
+    youtube_entity_type : str
+    youtube_entity_name : str
+    """
+    if youtube_entity_type == UploadRequest.VIDEO:
+        return "singles"
+    elif (
+        youtube_entity_type == UploadRequest.PLAYLIST
+        or youtube_entity_type == UploadRequest.CHANNEL
+    ):
+        return youtube_entity_name
