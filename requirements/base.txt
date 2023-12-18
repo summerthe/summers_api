@@ -39,7 +39,7 @@ google-auth==2.22.0
 # Other utils
 Pillow==10.0.0  # https://github.com/python-pillow/Pillow
 pandas==2.1.0 # https://pandas.pydata.org/
-rest-social-auth==8.0.0 # https://github.com/st4lk/django-rest-social-auth
+rest-social-auth==8.1.0 # https://github.com/st4lk/django-rest-social-auth
 
 
 # STATIC files
