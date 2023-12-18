@@ -44,7 +44,7 @@ rest-social-auth==8.1.0 # https://github.com/st4lk/django-rest-social-auth
 
 # STATIC files
 whitenoise==6.5.0 # https://github.com/evansd/whitenoise
-django-storages==1.13.2 # https://github.com/jschneier/django-storages
+django-storages==1.14.2 # https://github.com/jschneier/django-storages
 
 # youtube-dl
 yt-dlp==2023.7.6 # https://github.com/yt-dlp/yt-dlp
