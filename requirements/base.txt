@@ -23,7 +23,7 @@ pymongo==3.12.3 # https://github.com/mongodb/mongo-python-driver
 
 # Message queue
 celery==5.3.4
-redis==4.6.0
+redis==5.0.1
 
 # Django Channels
 channels==4.0.0
