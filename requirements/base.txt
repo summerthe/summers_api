@@ -47,6 +47,6 @@ whitenoise==6.5.0 # https://github.com/evansd/whitenoise
 django-storages==1.14.2 # https://github.com/jschneier/django-storages
 
 # youtube-dl
-yt-dlp==2023.7.6 # https://github.com/yt-dlp/yt-dlp
+yt-dlp==2023.12.30 # https://github.com/yt-dlp/yt-dlp
 
 Twisted[tls,http2]
