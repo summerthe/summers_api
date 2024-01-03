@@ -34,7 +34,7 @@ daphne==4.0.0
 # GCP
 google-api-core==2.11.1
 google-api-python-client==2.111.0
-google-auth==2.22.0
+google-auth==2.26.0
 
 # Other utils
 Pillow==10.1.0  # https://github.com/python-pillow/Pillow
