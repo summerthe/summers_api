@@ -191,14 +191,17 @@ def download_upload_single(
             filename = f"{video_folder}/{counter}-{video_title}.mp4"
         # `%` is pain for linux file system, so renaming it
         filename = filename.replace("%", "per")
-        youtube_downloader = YoutubeDownloader()
-        did_download = youtube_downloader.download_video(
-            filename,
-            video,
-            counter,
-        )
-        if not did_download:
-            return request_status
+
+        # if file already exists, dont download again
+        if not os.path.exists(filename):
+            youtube_downloader = YoutubeDownloader()
+            did_download = youtube_downloader.download_video(
+                filename,
+                video,
+                counter,
+            )
+            if not did_download:
+                return request_status
 
         # yt_dlp upload file with `.webm` extension
         if not os.path.exists(filename):
