@@ -33,7 +33,7 @@ daphne==4.0.0
 
 # GCP
 google-api-core==2.15.0
-google-api-python-client==2.111.0
+google-api-python-client==2.115.0
 google-auth==2.26.1
 
 # Other utils
