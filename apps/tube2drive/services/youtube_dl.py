@@ -1,5 +1,7 @@
 import logging
+import os
 import shutil
+import uuid
 
 import requests
 import yt_dlp
@@ -19,7 +21,8 @@ class YoutubeDownloader:
         """
         logger = logging.getLogger("aws")
 
-        ydl_opts = {"outtmpl": filename}
+        tmp_filename = filename or f"/tmp/{uuid.uuid4()}.webm"
+        ydl_opts = {"outtmpl": tmp_filename}
 
         if settings.DOWNLOAD_BEST_QUALITY and settings.STORE_TUBE2DRIVE_LOCAL:
             ydl_opts["format"] = "bestvideo[ext=mp4]+bestaudio[ext=mp4]/best[ext=mp4]"
@@ -62,9 +65,16 @@ class YoutubeDownloader:
                             )
                             return False
                         with requests.get(url_to_download, stream=True) as r:
-                            with open(filename, "wb") as f:
+                            with open(tmp_filename, "wb") as f:
                                 shutil.copyfileobj(r.raw, f)
+
+                        os.rename(tmp_filename,filename)
                         return True
             except Exception as e:
                 logger.error(e, exc_info=True)
+                try:
+                    os.remove(tmp_filename)
+                except:
+                    pass
+
         return False

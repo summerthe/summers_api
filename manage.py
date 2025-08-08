@@ -12,7 +12,6 @@ def main():
     BASE_DIR = Path(__file__).resolve().parent
     env = environ.Env()
     env.read_env(str(BASE_DIR / ".env"))
-
     """Run administrative tasks."""
     try:
         from django.core.management import execute_from_command_line
