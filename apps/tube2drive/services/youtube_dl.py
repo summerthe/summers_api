@@ -21,7 +21,7 @@ class YoutubeDownloader:
         """
         logger = logging.getLogger("aws")
 
-        tmp_filename = f"/tmp/{uuid.uuid4()}.webm"
+        tmp_filename = filename or f"/tmp/{uuid.uuid4()}.webm"
         ydl_opts = {"outtmpl": tmp_filename}
 
         if settings.DOWNLOAD_BEST_QUALITY and settings.STORE_TUBE2DRIVE_LOCAL:
